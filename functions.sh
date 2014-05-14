@@ -2,7 +2,7 @@
 
 gen_pass()
 {
-    length=10
+    local length=10
     if [ "x"$1 != "x" ]; then
         length=$1
     fi
@@ -12,6 +12,37 @@ gen_pass()
         echo "Could not find \"openssl\"."
         exit 1
     fi
+}
+
+ini_hasoption()
+{
+    local file=$1
+    local section=$2
+    local option=$3
+    line=`sed -n -e "/\[$section\]/,/\[.*\]/{/^$option[ \t]*=/p}" "$file"`
+    [ -n "$line" ]
+}
+
+ini_set()
+{
+    local file=$1
+    local section=$2
+    local option=$3
+    local value=$4
+    if ! grep -q "^[$section]" "$file"; then
+        # add section
+        echo "add section"
+        echo -e "\n[$section]" >> "$file"
+    fi
+    if ini_hasoption "$file" $section $option; then
+        echo "change"
+        sed -i -r "/\[$section\]/,/\[.*\]/{s~(^$option[ \t]*=[ \t]*).*$~\1$value~}" "$file"
+    else
+        sed -i -e "/\[$section\]/a \
+            $option = $value
+        " "$file"
+    fi
+
 }
 
 # vim: ts=4 sw=4 et tw=79

@@ -46,4 +46,14 @@ ubuntu_repo.sh
 
 messaging/mq.sh
 
+# Identity Service
+# ----------------
+# The Identity Service performs the following functions:
+#
+# + User management. Tracks users and their permissions.
+# + Service catalog. Provides a catalog of available services with their API
+# endpoints.
+
+keystone/keystone.sh
+
 # vim: ts=4 sw=4 et tw=79
