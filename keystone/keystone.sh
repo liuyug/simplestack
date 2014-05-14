@@ -15,9 +15,16 @@ DB_ROOT_PASS=`ini_get $pass_file "default" "DB_ROOT_PASS"`
 echo "KEYSTONE_DBUSER=$KEYSTONE_DBUSER"
 echo "KEYSTONE_DBPASS=$KEYSTONE_DBPASS"
 
-iniset $pass_file "default" "KEYSTONE_DBUSER" $KEYSTONE_DBUSER
-iniset $pass_file "default" "KEYSTONE_DBPASS" $KEYSTONE_DBPASS
+ini_set $pass_file "default" "KEYSTONE_DBUSER" $KEYSTONE_DBUSER
+ini_set $pass_file "default" "KEYSTONE_DBPASS" $KEYSTONE_DBPASS
+ini_set $pass_file "default" "KEYSTONE_TOKEN" $ADMIN_TOKEN
+KEYSTONE_SERVER=`hostname -s`
+ini_set $pass_file "default" "KEYSTONE_SERVER" $KEYSTONE_SERVER"
 
+echo <<EOF > $cur_dir/../openrc
+export OS_SERVICE_TOKEN=$KEYSTONE_TOKEN
+export OS_SERVICE_ENDPOINT="http://$KEYSTONE_SERVER:35357/v2.0"
+EOF
 
 apt-get remove keystone -y
 apt-get install keystone -y
@@ -30,6 +37,7 @@ ini_set $conf_file "DEFAULT" "log_dir" "/var/log/keystone"
 
 rm -rf /var/lib/keystone/keystone.db
 
+# create keystone database
 mysql -u root -p$DB_ROOT_PASS <<EOF
 DROP DATABASE keystone;
 CREATE DATABASE keystone;
@@ -37,6 +45,7 @@ GRANT ALL PRIVILEGES ON keystone.* TO '$KEYSTONE_DBUSER'@'localhost' IDENTIFIED 
 GRANT ALL PRIVILEGES ON keystone.* TO '$KEYSTONE_DBUSER'@'%' IDENTIFIED BY '$KEYSTONE_DBPASS';
 EOF
 
+# create keystone tables
 su -s /bin/sh -c "keystone-manage db_sync" keystone
 
 service keystone restart
