@@ -5,33 +5,36 @@ cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
 pass_file=$cur_dir/../pass.lst
 
-HOST=`hostname -s`
 KEYSTONE_DBUSER="keystone"
 KEYSTONE_DBPASS=`gen_pass`
 ADMIN_TOKEN=`gen_pass`
-DB_ROOT_PASS=`grep "^DB_ROOT_PASS=" "$pass_file" | cut -d"=" -f2`
 
-echo "keystone user: $KEYSTONE_DBUSER" | tee -a $pass_file
-echo "keystone pass: $KEYSTONE_DBPASS" | tee -a $pass_file
+DB_SERVER=`ini_get $pass_file "default" "DB_SERVER"`
+DB_ROOT_PASS=`ini_get $pass_file "default" "DB_ROOT_PASS"`
+
+echo "KEYSTONE_DBUSER=$KEYSTONE_DBUSER"
+echo "KEYSTONE_DBPASS=$KEYSTONE_DBPASS"
+
+iniset $pass_file "default" "KEYSTONE_DBUSER" $KEYSTONE_DBUSER
+iniset $pass_file "default" "KEYSTONE_DBPASS" $KEYSTONE_DBPASS
 
 
 apt-get remove keystone -y
 apt-get install keystone -y
 
 conf_file="/etc/keystone/keystone.conf"
-ini_set $conf_file "database" "connection" "mysql://$KEYSTONE_DBUSER:$KEYSTONE_DBPASS@$HOST/keystone"
+ini_set $conf_file "database" "connection" "mysql://$KEYSTONE_DBUSER:$KEYSTONE_DBPASS@$DB_SERVER/keystone"
 
 ini_set $conf_file "DEFAULT" "admin_token" "$ADMIN_TOKEN"
 ini_set $conf_file "DEFAULT" "log_dir" "/var/log/keystone"
 
-rm /var/lib/keystone/keystone.db
+rm -rf /var/lib/keystone/keystone.db
 
 mysql -u root -p$DB_ROOT_PASS <<EOF
+DROP DATABASE keystone;
 CREATE DATABASE keystone;
-GRANT ALL PRIVILEGES ON keystone.* TO '$KEYSTONE_DBUSER'@'localhost' \
-      IDENTIFIED BY '$KEYSTONE_DBPASS';
-GRANT ALL PRIVILEGES ON keystone.* TO '$KEYSTONE_DBUSER'@'%' \
-      IDENTIFIED BY '$KEYSTONE_DBPASS';
+GRANT ALL PRIVILEGES ON keystone.* TO '$KEYSTONE_DBUSER'@'localhost' IDENTIFIED BY '$KEYSTONE_DBPASS';
+GRANT ALL PRIVILEGES ON keystone.* TO '$KEYSTONE_DBUSER'@'%' IDENTIFIED BY '$KEYSTONE_DBPASS';
 EOF
 
 su -s /bin/sh -c "keystone-manage db_sync" keystone

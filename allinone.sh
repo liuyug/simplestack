@@ -20,7 +20,7 @@ ntp/ntp.sh
 # database. Must install the MySQL database on the controller node. Must
 # install the MySQL Python library on any additional nodes that access MySQL.
 
-database/db.sh
+database/db.sh 127.0.0.1
 database/db_client.sh
 
 # OpenStack packages

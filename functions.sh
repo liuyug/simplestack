@@ -19,7 +19,7 @@ ini_hasoption()
     local file=$1
     local section=$2
     local option=$3
-    line=`sed -n -e "/\[$section\]/,/\[.*\]/{/^$option[ \t]*=/p}" "$file"`
+    line=`sed -n -e "/^\[$section\]/,/^\[.*\]/{/^$option[ \t]*=/p}" "$file"`
     [ -n "$line" ]
 }
 
@@ -31,18 +31,25 @@ ini_set()
     local value=$4
     if ! grep -q "^[$section]" "$file"; then
         # add section
-        echo "add section"
         echo -e "\n[$section]" >> "$file"
     fi
     if ini_hasoption "$file" $section $option; then
-        echo "change"
-        sed -i -r "/\[$section\]/,/\[.*\]/{s~(^$option[ \t]*=[ \t]*).*$~\1$value~}" "$file"
+        sed -i -r "/^\[$section\]/,/^\[.*\]/{s~(^$option[ \t]*=[ \t]*).*$~\1$value~}" "$file"
     else
-        sed -i -e "/\[$section\]/a \
-            $option = $value
+        sed -i -e "/^\[$section\]/a \
+            $option=$value
         " "$file"
     fi
+}
 
+ini_get()
+{
+    local file=$1
+    local section=$2
+    local option=$3
+    local line
+    line=`sed -n -e "/^\[$section\]/,/^\[.*\]/{/^$option[ \t]*=/p}" "$file"`
+    echo ${line#*=}
 }
 
 # vim: ts=4 sw=4 et tw=79
