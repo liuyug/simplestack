@@ -59,7 +59,7 @@ keystone endpoint-create \
 unset OS_SERVICE_TOKEN
 unset OS_SERVICE_ENDPOINT
 
-echo <<EOF > $cur_dir/../admin-openrc.sh
+cat > $cur_dir/../admin-openrc.sh <<EOF
 export OS_USERNAME=admin
 export OS_PASSWORD=$ADMIN_PASS
 export OS_TENANT_NAME=admin
