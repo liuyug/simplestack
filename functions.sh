@@ -29,14 +29,14 @@ ini_set()
     local section=$2
     local option=$3
     local value=$4
-    if ! grep -q "^[$section]" "$file"; then
+    if ! grep -q "^\[$section\]" "$file"; then
         # add section
-        echo -e "\n[$section]" >> "$file"
+        printf "\n[$section]\n" >> "$file"
     fi
     if ini_hasoption "$file" $section $option; then
         sed -i -r "/^\[$section\]/,/^\[.*\]/{s~(^$option[ \t]*=[ \t]*).*$~\1$value~}" "$file"
     else
-        sed -i -e "/^\[$section\]/a \
+        sed -i -e "/^\[$section\]/a \\
             $option=$value
         " "$file"
     fi

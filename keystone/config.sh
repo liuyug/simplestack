@@ -15,10 +15,13 @@ ADMIN_PASS=`gen_pass`
 ADMIN_EMAIL="admin@localhost"
 
 ini_set $pass_file "default" "ADMIN_PASS" $ADMIN_PASS
+keystone user-delete admin
 keystone user-create --name=admin --pass=$ADMIN_PASS --email=$ADMIN_EMAIL
 
+keystone role-delete admin
 keystone role-create --name=admin
 
+keystone tenant-delete admin
 keystone tenant-create --name=admin --description="Admin Tenant"
 
 keystone user-role-add --user=admin --tenant=admin --role=admin
@@ -29,19 +32,24 @@ keystone user-role-add --user=admin --role=_member_ --tenant=admin
 
 DEMO_PASS=`gen_pass`
 DEMO_EMAIL="demo@localhost"
+keystone user-delete demo
 keystone user-create --name=demo --pass=$DEMO_PASS --email=$DEMO_EMAIL
 
+keystone tenant-delete demo
 keystone tenant-create --name=demo --description="Demo Tenant"
 
 keystone user-role-add --user=demo --role=_member_ --tenant=demo
 
 # create service tenant
+keystone tenant-delete service
 keystone tenant-create --name=service --description="Service Tenant"
 
 # define service and api endpoint
+keystone service-delete keystone
 keystone service-create --name=keystone --type=identity \
     --description="OpenStack Identity"
 
+#keystone endpoint-delete
 keystone endpoint-create \
     --service-id=$(keystone service-list | awk '/ identity / {print $2}') \
     --publicurl=http://$KEYSTONE_SERVER:5000/v2.0 \
