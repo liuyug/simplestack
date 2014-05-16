@@ -2,16 +2,17 @@
 
 cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
-pass_file=$cur_dir/../pass.lst
+stack_conf=$cur_dir/../stack.conf
 
+RABBIT_SERVER=`hostname -s`
 RABBIT_USER="guest"
 RABBIT_PASS=`gen_pass`
 
-echo "RABBIT_USER=$RABBIT_USER"
-echo "RABBIT_PASS=$RABBIT_PASS"
-ini_set $pass_file "default" "RABBIT_USER" $RABBIT_USER
-ini_set $pass_file "default" "RABBIT_PASS" $RABBIT_PASS
+ini_set $stack_conf "rabbit" "host" $RABBIT_SERVER
+ini_set $stack_conf "rabbit" "username" $RABBIT_USER
+ini_set $stack_conf "rabbit" "password" $RABBIT_PASS
 
+apt-get remove rabbitmq-server -y
 apt-get install rabbitmq-server -y
 rabbitmqctl change_password $RABBIT_USER $RABBIT_PASS
 

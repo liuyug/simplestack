@@ -57,5 +57,24 @@ messaging/mq.sh
 keystone/keystone.sh
 keystone/config.sh
 
+# Image Service
+# -------------
+# The OpenStack Image Service enables users to discover, register, and retrieve
+# virtual machine images. Also known as the glance project, the Image Service
+# offers a REST API that enables you to query virtual machine image metadata
+# and retrieve an actual image. You can store virtual machine images made
+# available through the Image Service in a variety of locations from simple
+# file systems to object-storage systems like OpenStack Object Storage.
+#
+# + glance-api
+#
+#   Accepts Image API calls for image discovery, retrieval, and storage.
+#
+# + glance-registry
+#
+#   Stores, processes, and retrieves metadata about images. Metadata includes
+#   items such as size and type.
+
+glance/glance.sh
 
 # vim: ts=4 sw=4 et tw=79

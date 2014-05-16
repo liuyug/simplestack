@@ -16,37 +16,38 @@ gen_pass()
 
 ini_hasoption()
 {
-    local file=$1
-    local section=$2
-    local option=$3
+    local file="$1"
+    local section="$2"
+    local option="$3"
     line=`sed -n -e "/^\[$section\]/,/^\[.*\]/{/^$option[ \t]*=/p}" "$file"`
     [ -n "$line" ]
 }
 
 ini_set()
 {
-    local file=$1
-    local section=$2
-    local option=$3
-    local value=$4
+    local file="$1"
+    local section="$2"
+    local option="$3"
+    local value="$4"
     if ! grep -q "^\[$section\]" "$file"; then
         # add section
+        # dash don't support "echo -e"
         printf "\n[$section]\n" >> "$file"
     fi
     if ini_hasoption "$file" $section $option; then
         sed -i -r "/^\[$section\]/,/^\[.*\]/{s~(^$option[ \t]*=[ \t]*).*$~\1$value~}" "$file"
     else
         sed -i -e "/^\[$section\]/a \\
-            $option=$value
+$option=$value
         " "$file"
     fi
 }
 
 ini_get()
 {
-    local file=$1
-    local section=$2
-    local option=$3
+    local file="$1"
+    local section="$2"
+    local option="$3"
     local line
     line=`sed -n -e "/^\[$section\]/,/^\[.*\]/{/^$option[ \t]*=/p}" "$file"`
     echo ${line#*=}

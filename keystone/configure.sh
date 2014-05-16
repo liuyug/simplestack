@@ -2,19 +2,22 @@
 
 cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
-pass_file=$cur_dir/../pass.lst
+stack_conf=$cur_dir/../stack.conf
 
-KEYSTONE_TOKEN=`ini_get $pass_file "default" "KEYSTONE_TOKEN"`
-KEYSTONE_SERVER=`ini_get $pass_file "default" "KEYSTONE_SERVER"`
+KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
+KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
+KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
 
 export OS_SERVICE_TOKEN=$KEYSTONE_TOKEN
-export OS_SERVICE_ENDPOINT="http://$KEYSTONE_SERVER:35357/v2.0"
+export OS_SERVICE_ENDPOINT=$KEYSTONE_ENDPOINT
 
 # create admin
 ADMIN_PASS=`gen_pass`
-ADMIN_EMAIL="admin@localhost"
+ADMIN_EMAIL="admin@$KEYSTONE_SERVER"
 
-ini_set $pass_file "default" "ADMIN_PASS" $ADMIN_PASS
+ini_set $stack_conf "keystone" "admin_username" "admin"
+ini_set $stack_conf "keystone" "admin_password" $ADMIN_PASS
+
 keystone user-delete admin
 keystone user-create --name=admin --pass=$ADMIN_PASS --email=$ADMIN_EMAIL
 
@@ -28,10 +31,17 @@ keystone user-role-add --user=admin --tenant=admin --role=admin
 
 keystone user-role-add --user=admin --role=_member_ --tenant=admin
 
+$cur_dir/../mkrc.sh "$KEYSTONE_SERVER" "admin" "$ADMIN_PASS" "admin" \
+    > $cur_dir/../admin-openrc.sh
+
 # create noraml user
 
 DEMO_PASS=`gen_pass`
-DEMO_EMAIL="demo@localhost"
+DEMO_EMAIL="demo@$KEYSTONE_SERVER"
+
+ini_set $stack_conf "keystone" "demo_username" "demo"
+ini_set $stack_conf "keystone" "demo_password" $ADMIN_PASS
+
 keystone user-delete demo
 keystone user-create --name=demo --pass=$DEMO_PASS --email=$DEMO_EMAIL
 
@@ -39,6 +49,9 @@ keystone tenant-delete demo
 keystone tenant-create --name=demo --description="Demo Tenant"
 
 keystone user-role-add --user=demo --role=_member_ --tenant=demo
+
+$cur_dir/../mkrc.sh "$KEYSTONE_SERVER" "demo" "$DEMO_PASS" "demo" \
+    > $cur_dir/../demo-openrc.sh
 
 # create service tenant
 keystone tenant-delete service
@@ -56,15 +69,9 @@ keystone endpoint-create \
     --internalurl=http://$KEYSTONE_SERVER:5000/v2.0 \
     --adminurl=http://$KEYSTONE_SERVER:35357/v2.0
 
+
+
 unset OS_SERVICE_TOKEN
 unset OS_SERVICE_ENDPOINT
-
-cat > $cur_dir/../admin-openrc.sh <<EOF
-export OS_USERNAME=admin
-export OS_PASSWORD=$ADMIN_PASS
-export OS_TENANT_NAME=admin
-export OS_AUTH_URL=http://$KEYSTONE_SERVER:35357/v2.0
-EOF
-# source admin-openrc.sh
 
 # vim: ts=4 sw=4 et tw=79
