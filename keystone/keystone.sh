@@ -7,11 +7,11 @@ stack_conf=$cur_dir/../stack.conf
 
 KEYSTONE_DBUSER="keystone"
 KEYSTONE_DBPASS=`gen_pass`
+KEYSTONE_SERVER=`hostname -s`
 ADMIN_TOKEN=`gen_pass`
 
 DB_SERVER=`ini_get $stack_conf "database" "host"`
 DB_ROOT_PASS=`ini_get $stack_conf "database" "password"`
-KEYSTONE_SERVER=`hostname -s`
 
 ini_set $stack_conf "keystone" "db_username" $KEYSTONE_DBUSER
 ini_set $stack_conf "keystone" "db_password" $KEYSTONE_DBPASS

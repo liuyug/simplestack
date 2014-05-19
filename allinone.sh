@@ -55,7 +55,7 @@ messaging/mq.sh
 # endpoints.
 
 keystone/keystone.sh
-keystone/config.sh
+keystone/configure.sh
 
 # Image Service
 # -------------
@@ -76,5 +76,127 @@ keystone/config.sh
 #   items such as size and type.
 
 glance/glance.sh
+glance/configure.sh
+
+# Compute service
+# ---------------
+# The Compute service is a cloud computing fabric controller, which is the main
+# part of an IaaS system. Use it to host and manage cloud computing systems.
+# The main modules are implemented in Python.
+#
+# The Compute service is made up of the following functional areas and their
+# underlying components:
+#
+# + API
+#
+#   - nova-api service.
+#
+#     Accepts and responds to end user compute API calls.
+#
+#   - nova-api-metadata service.
+#
+#     Accepts metadata requests from instances. The nova-api-metadata service
+#     is generally only used when you run in multi-host mode with nova-network
+#     installations.
+#
+# + Compute core
+#
+#   - nova-compute process.
+#
+#     A worker daemon that creates and terminates virtual machine instances
+#     through hypervisor APIs.
+#
+#   - nova-scheduler process.
+#
+#     Takes a virtual machine instance request from the queue and determines on
+#     which compute server host it should run.
+#
+#   - nova-conductor module.
+#
+#     Mediates interactions between nova-compute and the database. Aims to
+#     eliminate direct accesses to the cloud database made by nova-compute. The
+#     nova-conductor module scales horizontally. However, do not deploy it on
+#     any nodes where nova-compute runs.
+#
+# + Networking for VMs
+#
+#   - nova-network worker daemon.
+#
+#     Similar to nova-compute, it accepts networking tasks from the queue and
+#     performs tasks to manipulate the network, such as setting up bridging
+#     interfaces or changing iptables rules. This functionality is being
+#     migrated to OpenStack Networking, which is a separate OpenStack service.
+#
+#   - nova-dhcpbridge script.
+#
+#     Tracks IP address leases and records them in the database by using the
+#     dnsmasq dhcp-script facility. This functionality is being migrated to
+#     OpenStack Networking. OpenStack Networking provides a different script.
+#
+# + Console interface
+#
+#   - nova-consoleauth daemon.
+#
+#     Authorizes tokens for users that console proxies provide. This service
+#     must be running for console proxies to work.
+#
+#   - nova-novncproxy daemon.
+#
+#     Provides a proxy for accessing running instances through a VNC
+#     connection. Supports browser-based novnc clients.
+#
+#   - nova-xvpnvncproxy daemon.
+#
+#     A proxy for accessing running instances through a VNC connection.
+#     Supports a Java client specifically designed for OpenStack.
+#
+#   - nova-cert daemon.
+#
+#     Manages x509 certificates.
+#
+# + Image management (EC2 scenario)
+#
+#   - nova-objectstore daemon.
+#
+#     Provides an S3 interface for registering images with the Image Service.
+#     Mainly used for installations that must support euca2ools.
+#
+#   - euca2ools client.
+#
+#     A set of command-line interpreter commands for managing cloud resources.
+#
+# + Command-line clients and other interfaces
+#
+#   - nova client.
+#
+#     Enables users to submit commands as a tenant administrator or end user.
+#
+#   - nova-manage client.
+#
+#     Enables cloud administrators to submit commands.
+#
+# + Other components
+#
+#   - The queue.
+#
+#     A central hub for passing messages between daemons.
+#
+#   - SQL database.
+#
+#     Stores most build-time and runtime states for a cloud infrastructure.
+#     Includes instance types that are available for use, instances in use,
+#     available networks, and projects.
+
+compute/compute.sh
+compute/compute_node.sh
+
+#
+#
+#
+#
+#
+#
+#
+
 
 # vim: ts=4 sw=4 et tw=79

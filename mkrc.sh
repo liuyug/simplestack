@@ -1,0 +1,20 @@
+#!/bin/sh
+
+if [ $# -lt 4 ]; then
+    echo "$0 <KEYSTONE_SERVER> <USER_NAME> <USER_PASS> <TENANT_NAME>"
+    exit 1
+fi
+
+KEYSTONE_SERVER=$1
+USER_NAME=$2
+USER_PASS=$3
+TENANT_NAME=$4
+
+cat <<EOF
+export OS_USERNAME=$USER_NAME
+export OS_PASSWORD=$USER_PASS
+export OS_TENANT_NAME=$TENANT_NAME
+export OS_AUTH_URL=http://$KEYSTONE_SERVER:35357/v2.0
+EOF
+
+# vim: ts=4 sw=5 et tw=79
