@@ -8,7 +8,7 @@ stack_conf=$cur_dir/../stack.conf
 apt-get remove nova-compute-kvm python-guestfs -y
 apt-get install nova-compute-kvm python-guestfs -y
 
-#dpkg-statoverride  --update --add root root 0644 /boot/vmlinuz-$(uname -r)
+dpkg-statoverride  --update --add root root 0644 /boot/vmlinuz-$(uname -r)
 
 # enable this override for all future kernel updates
 cat <<EOF > /etc/kernel/postinst.d/statoverride
@@ -61,9 +61,9 @@ ini_set $conf_file "DEFAULT" "glance_host" "$GLANCE_SERVER"
 
 ret=`egrep -c '(vmx|svm)' /proc/cpuinfo`
 if [ $ret -gt 0 ]; then
-    echo "Support hardware acceleration VM"
+    echo "Compute node support hardware acceleration VM"
 else
-    echo "change "virt_type = qemu" of [libvirt] in /etc/nova/nova-compute.conf"
+    echo "Change "virt_type = qemu" of [libvirt] in /etc/nova/nova-compute.conf"
 fi
 
 # /var/log/nova/nova-compute.log

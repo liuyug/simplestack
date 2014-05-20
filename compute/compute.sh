@@ -58,8 +58,8 @@ rm -rf /var/lib/nova/nova.sqlite
 mysql -u root -p$DB_ROOT_PASS <<EOF
 DROP DATABASE IF EXISTS nova;
 CREATE DATABASE nova;
-GRANT ALL PRIVILEGES ON nova* TO '$NOVA_DBUSER'@'localhost' IDENTIFIED BY '$NOVA_DBPASS';
-GRANT ALL PRIVILEGES ON nova* TO '$NOVA_DBUSER'@'%' IDENTIFIED BY '$NOVA_DBPASS';
+GRANT ALL PRIVILEGES ON nova.* TO '$NOVA_DBUSER'@'localhost' IDENTIFIED BY '$NOVA_DBPASS';
+GRANT ALL PRIVILEGES ON nova.* TO '$NOVA_DBUSER'@'%' IDENTIFIED BY '$NOVA_DBPASS';
 EOF
 
 su -s /bin/sh -c "nova-manage db sync" nova
@@ -77,7 +77,7 @@ keystone user-role-add --user=$NOVA_USER --tenant=service --role=admin
 keystone service-delete nova
 keystone service-create --name=nova --type=compute \
     --description="OpenStack Compute"
-$ keystone endpoint-create \
+keystone endpoint-create \
     --service-id=$(keystone service-list | awk '/ compute / {print $2}') \
     --publicurl=http://$NOVA_SERVER:8774/v2/%\(tenant_id\)s \
     --internalurl=http://$NOVA_SERVER:8774/v2/%\(tenant_id\)s \

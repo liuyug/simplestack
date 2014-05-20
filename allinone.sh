@@ -43,6 +43,8 @@ ubuntu_repo.sh
 # information among services. The message broker service typically runs on the
 # controller node. OpenStack supports several message brokers including
 # RabbitMQ, Qpid, and ZeroMQ.
+#
+# rabbitmq port: 53132
 
 messaging/mq.sh
 
@@ -53,6 +55,8 @@ messaging/mq.sh
 # + User management. Tracks users and their permissions.
 # + Service catalog. Provides a catalog of available services with their API
 # endpoints.
+#
+# auth uri ports: 5000, auth port:35357
 
 keystone/keystone.sh
 keystone/configure.sh
@@ -74,6 +78,9 @@ keystone/configure.sh
 #
 #   Stores, processes, and retrieves metadata about images. Metadata includes
 #   items such as size and type.
+#
+# glance-api port: 6794
+# glance-registry port: 6784
 
 glance/glance.sh
 glance/configure.sh
@@ -186,17 +193,21 @@ glance/configure.sh
 #     Stores most build-time and runtime states for a cloud infrastructure.
 #     Includes instance types that are available for use, instances in use,
 #     available networks, and projects.
+#
+# nova api port: 8774
+# nova-novncproxy port: 6080
 
 compute/compute.sh
 compute/compute_node.sh
 
+# Networking service
+# ------------------
+# + OpenStack Networking (neutron)
+# + Legacy networking (nova-network)
 #
-#
-#
-#
-#
-#
-#
-
+# neutron api port: 9696
+network/neutron.sh
+network/neutron_node.sh
+network/nova_configure.sh
 
 # vim: ts=4 sw=4 et tw=79
