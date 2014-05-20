@@ -6,13 +6,15 @@ cur_dir=`dirname  $(readlink -fn $0)`
 
 # Extrnal network
 # The admin tenant owns this network because it provides external network
-# access for multiple tenants. 
+# access for multiple tenants.
 FLOATING_IP_START="10.0.1.100"
 FLOATING_IP_END="10.0.1.150"
 EXTERNAL_NETWORK_GATEWAY="10.0.1.1"
 EXTERNAL_NETWORK_CIDR="10.0.1.0/24"
 
+neutron net-delete ext-net
 neutron net-create ext-net --shared --router:external=True
+neutron subnet-delete ext-net
 neutron subnet-create ext-net --name ext-subnet \
     --allocation-pool start=$FLOATING_IP_START,end=$FLOATING_IP_END \
     --disable-dhcp --gateway $EXTERNAL_NETWORK_GATEWAY $EXTERNAL_NETWORK_CIDR
@@ -25,10 +27,13 @@ neutron subnet-create ext-net --name ext-subnet \
 TENANT_NETWORK_GATEWAY="192.168.200.1"
 TENANT_NETWORK_CIDR="192.168.200.0/24"
 
+neutron net-delete demo-net
 neutron net-create demo-net
+neutron subnet-delete demo-net
 neutron subnet-create demo-net --name demo-subnet \
-    --gateway TENANT_NETWORK_GATEWAY TENANT_NETWORK_CIDR
+    --gateway $TENANT_NETWORK_GATEWAY $TENANT_NETWORK_CIDR
 
+neutron router-delete demo-router
 neutron router-create demo-router
 neutron router-interface-add demo-router demo-subnet
 neutron router-gateway-set demo-router ext-net

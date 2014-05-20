@@ -7,9 +7,9 @@ stack_conf=$cur_dir/../stack.conf
 
 
 conf_file="/etc/sysctl.conf"
-ini_set $conf_file "" "net.ipv4.ip_forward" "1"
-ini_set $conf_file "" "net.ipv4.conf.all.rp_filter" "0"
-ini_set $conf_file "" "net.ipv4.conf.default.rp_filter" "0"
+ini_set $conf_file "#" "net.ipv4.ip_forward" "1"
+ini_set $conf_file "#" "net.ipv4.conf.all.rp_filter" "0"
+ini_set $conf_file "#" "net.ipv4.conf.default.rp_filter" "0"
 sysctl -p
 
 apt-get remove neutron-plugin-ml2 neutron-plugin-openvswitch-agent \
@@ -105,7 +105,9 @@ ini_set $conf_file "securitygroup" "enable_security_group" "True"
 
 # To configure the Open vSwitch (OVS) service
 service openvswitch-switch restart
+ovs-vsctl del-br br-int
 ovs-vsctl add-br br-int
+ovs-vsctl del-br br-ex
 ovs-vsctl add-br br-ex
 ovs-vsctl add-port br-ex $NEUTRON_NODE_INTERFACE
 # disable Generic Receive Offload (GRO) to achieve suitable throughput between

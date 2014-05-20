@@ -19,7 +19,7 @@ ini_hasoption()
     local file="$1"
     local section="$2"
     local option="$3"
-    if [ -z "$section" ]; then
+    if [ "$section" = "#" ]; then
         line=`sed -n -e "/^$option[ \t]*=/p" "$file"`
     else
         line=`sed -n -e "/^\[$section\]/,/^\[.*\]/{/^$option[ \t]*=/p}" "$file"`
@@ -33,7 +33,7 @@ ini_set()
     local section="$2"
     local option="$3"
     local value="$4"
-    if [ -n "$section" ]; then
+    if [ ! "$section" = "#" ]; then
         if ! grep -q "^\[$section\]" "$file"; then
             # add section
             # dash don't support "echo -e"
@@ -41,16 +41,16 @@ ini_set()
         fi
     fi
     if ini_hasoption "$file" $section $option; then
-        if [ -z "$section" ]; then
+        if [ "$section" = "#" ]; then
             sed -i -r "s~(^$option[ \t]*=[ \t]*).*$~\1$value~" "$file"
         else
             sed -i -r "/^\[$section\]/,/^\[.*\]/{s~(^$option[ \t]*=[ \t]*).*$~\1$value~}" "$file"
         fi
     else
-        if [ -z "$section" ]; then
-            sed -i -e "a \\
+        if [ "$section" = "#" ]; then
+            cat <<EOF >> "$file"
 $option=$value
-            " "$file"
+EOF
         else
             sed -i -e "/^\[$section\]/a \\
 $option=$value
@@ -65,7 +65,7 @@ ini_get()
     local section="$2"
     local option="$3"
     local line
-    if [ -z "$section" ]; then
+    if [ "$section" = "#" ]; then
         line=`sed -n -e "/^$option[ \t]*=/p" "$file"`
     else
         line=`sed -n -e "/^\[$section\]/,/^\[.*\]/{/^$option[ \t]*=/p}" "$file"`
@@ -78,7 +78,7 @@ ini_comment()
     local file="$1"
     local section="$2"
     local option="$3"
-    if [ -z "$section" ]; then
+    if [ "$section" = "#" ]; then
         sed -i -e "s~^\($option[ \t]*=.*$\)~#\1~" "$file"
     else
         sed -i -e "/^\[$section\]/,/^\[.*\]/{s~^\($option[ \t]*=.*$\)~#\1~}" "$file"

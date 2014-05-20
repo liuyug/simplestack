@@ -208,6 +208,7 @@ compute/compute_node.sh
 # neutron api port: 9696
 network/neutron.sh
 network/neutron_node.sh
-network/nova_configure.sh
+network/neutron_compute_node.sh
+network/neutron_configure.sh
 
 # vim: ts=4 sw=4 et tw=79

@@ -7,8 +7,8 @@ stack_conf=$cur_dir/../stack.conf
 
 
 conf_file="/etc/sysctl.conf"
-ini_set $conf_file "" "net.ipv4.conf.all.rp_filter" "0"
-ini_set $conf_file "" "net.ipv4.conf.default.rp_filter" "0"
+ini_set $conf_file "#" "net.ipv4.conf.all.rp_filter" "0"
+ini_set $conf_file "#" "net.ipv4.conf.default.rp_filter" "0"
 sysctl -p
 
 NEUTRON_USER=`ini_get $stack_conf "neutron" "username"`
@@ -94,6 +94,7 @@ ini_set $conf_file "DEFAULT" "neutron_metadata_proxy_shared_secret" \
 
 # To configure the Open vSwitch (OVS) service
 service openvswitch-switch restart
+ovs-vsctl del-br br-int
 ovs-vsctl add-br br-int
 
 # compute service

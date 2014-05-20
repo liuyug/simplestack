@@ -35,11 +35,10 @@ GRANT ALL PRIVILEGES ON neutron.* TO '$NEUTRON_DBUSER'@'localhost' IDENTIFIED BY
 GRANT ALL PRIVILEGES ON neutron.* TO '$NEUTRON_DBUSER'@'%' IDENTIFIED BY '$NEUTRON_DBPASS';
 EOF
 
-su -s /bin/sh -c "neutron-manage db sync" nova
-
 export OS_SERVICE_TOKEN=$KEYSTONE_TOKEN
 export OS_SERVICE_ENDPOINT=$KEYSTONE_ENDPOINT
 
+keystone user-delete $NEUTRON_USER
 keystone user-create --name=$NEUTRON_USER --pass=$NEUTRON_PASS \
     --email=$NEUTRON_USER@$NEUTRON_SERVER
 keystone user-role-add --user=$NEUTRON_USER --tenant=service --role=admin
