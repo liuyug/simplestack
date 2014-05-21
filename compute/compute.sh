@@ -25,8 +25,6 @@ ini_set $stack_conf "nova" "username" $NOVA_USER
 ini_set $stack_conf "nova" "password" $NOVA_PASS
 
 # Install the Compute packages necessary for the controller node
-apt-get remove nova-api nova-cert nova-conductor nova-consoleauth \
-      nova-novncproxy nova-scheduler python-novaclient -y
 apt-get install nova-api nova-cert nova-conductor nova-consoleauth \
       nova-novncproxy nova-scheduler python-novaclient -y
 
@@ -47,7 +45,7 @@ ini_set $conf_file "keystone_authtoken" "auth_protocol" "http"
 ini_set $conf_file "keystone_authtoken" "admin_tenant_name" "service"
 ini_set $conf_file "keystone_authtoken" "admin_user" "$NOVA_USER"
 ini_set $conf_file "keystone_authtoken" "admin_password" "$NOVA_PASS"
-ini_set $conf_file "DEFAULT" "my_ip" "$NOVA_SERVER"
+ini_set $conf_file "DEFAULT" "my_ip" "$(resolveip -s $NOVA_SERVER)"
 ini_set $conf_file "DEFAULT" "vncserver_listen" "$NOVA_SERVER"
 ini_set $conf_file "DEFAULT" "vncserver_proxyclient_address" "$NOVA_SERVER"
 
@@ -92,6 +90,9 @@ service nova-conductor restart
 service nova-novncproxy restart
 
 # check nova
-# nova image-list
+nova image-list
+
+# check directory permission
+ls -l /var/lib/nova
 
 # vim: ts=4 sw=4 et tw=79

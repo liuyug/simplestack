@@ -5,7 +5,6 @@ cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
 stack_conf=$cur_dir/../stack.conf
 
-apt-get remove nova-compute-kvm python-guestfs -y
 apt-get install nova-compute-kvm python-guestfs -y
 
 dpkg-statoverride  --update --add root root 0644 /boot/vmlinuz-$(uname -r)
@@ -25,6 +24,8 @@ DB_ROOT_PASS=`ini_get $stack_conf "database" "password"`
 
 NOVA_DBUSER=`ini_get $stack_conf "nova" "db_username"`
 NOVA_DBPASS=`ini_get $stack_conf "nova" "db_password"`
+NOVA_USER=`ini_get $stack_conf "nova" "username"`
+NOVA_PASS=`ini_get $stack_conf "nova" "password"`
 NOVA_SERVER=`ini_get $stack_conf "nova" "host"`
 NOVA_COMPUTE_SERVER=`hostname -s`
 ini_set $stack_conf "nova" "host_compute" $NOVA_COMPUTE_SERVER
@@ -52,7 +53,7 @@ ini_set $conf_file "keystone_authtoken" "auth_protocol" "http"
 ini_set $conf_file "keystone_authtoken" "admin_tenant_name" "service"
 ini_set $conf_file "keystone_authtoken" "admin_user" "$NOVA_USER"
 ini_set $conf_file "keystone_authtoken" "admin_password" "$NOVA_PASS"
-ini_set $conf_file "DEFAULT" "my_ip" "$NOVA_COMPUTE_SERVER"
+ini_set $conf_file "DEFAULT" "my_ip" "$(resolveip -s $NOVA_COMPUTE_SERVER)"
 ini_set $conf_file "DEFAULT" "vnc_enabled" "True"
 ini_set $conf_file "DEFAULT" "vncserver_listen" "0.0.0.0"
 ini_set $conf_file "DEFAULT" "vncserver_proxyclient_address" "$NOVA_COMPUTE_SERVER"

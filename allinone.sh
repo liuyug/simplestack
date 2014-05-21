@@ -58,8 +58,8 @@ messaging/mq.sh
 #
 # auth uri ports: 5000, auth port:35357
 
-keystone/keystone.sh
-keystone/configure.sh
+identity/keystone.sh
+identity/configure.sh
 
 # Image Service
 # -------------
@@ -82,8 +82,8 @@ keystone/configure.sh
 # glance-api port: 6794
 # glance-registry port: 6784
 
-glance/glance.sh
-glance/configure.sh
+image/glance.sh
+image/configure.sh
 
 # Compute service
 # ---------------
@@ -103,8 +103,8 @@ glance/configure.sh
 #   - nova-api-metadata service.
 #
 #     Accepts metadata requests from instances. The nova-api-metadata service
-#     is generally only used when you run in multi-host mode with nova-network
-#     installations.
+#     is generally only used when you run in **multi-host** mode with
+#     nova-network installations.
 #
 # + Compute core
 #
@@ -206,9 +206,50 @@ compute/compute_node.sh
 # + Legacy networking (nova-network)
 #
 # neutron api port: 9696
-network/neutron.sh
-network/neutron_node.sh
-network/neutron_compute_node.sh
-network/neutron_configure.sh
+network/nova-network.sh
+network/nova-network_compute_node.sh
+network/nova-network_configure.sh
+
+# Dashboard service
+# -----------------
+# The OpenStack dashboard, also known as Horizon, is a Web interface that
+# enables cloud administrators and users to manage various OpenStack resources
+# and services.
+#
+# curl http://keystone/horizon
+dashboard/dashboard.sh
+
+# Block Storage service
+# ---------------------
+# The Block Storage service enables management of volumes, volume snapshots,
+# and volume types. It includes the following components:
+#
+# + cinder-api
+#
+#   Accepts API requests and routes them to cinder-volume for action.
+#
+# + cinder-volume
+#
+#   Responds to requests to read from and write to the Block Storage database
+#   to maintain state, interacting with other processes (like cinder-scheduler)
+#   through a message queue and directly upon block storage providing hardware
+#   or software. It can interact with a variety of storage providers through a
+#   driver architecture.
+#
+# + cinder-scheduler daemon
+#
+#   Like the nova-scheduler, picks the optimal block storage provider node on
+#   which to create the volume.
+#
+# + Messaging queue
+#
+#   Routes information between the Block Storage service processes.
+#
+# The Block Storage service interacts with Compute to provide volumes for
+# instances.
+#
+# cinder api port: 8776
+block_storage/cinder.sh
+
 
 # vim: ts=4 sw=4 et tw=79

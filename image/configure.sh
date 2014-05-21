@@ -26,4 +26,7 @@ rm -rf /tmp/cirros.img
 #     --is-public=true \
 #     --copy-from http://cdn.download.cirros-cloud.net/0.3.2/cirros-0.3.2-x86_64-disk.img
 
+# check
+glance image-list
+
 # vim: ts=4 sw=4 et tw=79

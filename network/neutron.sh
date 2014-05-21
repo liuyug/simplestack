@@ -52,7 +52,6 @@ keystone endpoint-create \
     --adminurl http://$NEUTRON_SERVER:9696 \
     --internalurl http://$NEUTRON_SERVER:9696
 
-apt-get remove neutron-server neutron-plugin-ml2 -y
 apt-get install neutron-server neutron-plugin-ml2 -y
 
 RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`

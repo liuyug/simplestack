@@ -7,8 +7,9 @@ stack_conf=$cur_dir/../stack.conf
 
 INTERFACE_NAME="eth0"
 
-apt-get remove nova-network nova-api-metadata -y
-apt-get install nova-network nova-api-metadata -y
+apt-get install nova-network -y
+# only for multi-host
+apt-get install nova-api-metadata -y
 
 conf_file="/etc/nova/nova.conf"
 ini_set $conf_file "DEFAULT" "network_api_class" "nova.network.api.API"

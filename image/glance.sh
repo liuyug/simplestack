@@ -24,7 +24,6 @@ ini_set $stack_conf "glance" "host" "$GLANCE_SERVER"
 ini_set $stack_conf "glance" "username" "$GLANCE_USER"
 ini_set $stack_conf "glance" "password" "$GLANCE_PASS"
 
-apt-get remove glance python-glanceclient -y
 apt-get install glance python-glanceclient -y
 
 RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`

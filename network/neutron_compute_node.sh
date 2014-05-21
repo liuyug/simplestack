@@ -22,15 +22,12 @@ KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
 RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
 
-apt-get remove neutron-common neutron-plugin-ml2 \
-    neutron-plugin-openvswitch-agent -y
 apt-get install neutron-common neutron-plugin-ml2 \
     neutron-plugin-openvswitch-agent -y
 
 major=$(uname -r | cut -d"." -f 1)
 minor=$(uname -r | cut -d"." -f 2)
 if [[ $major -eq 3 && $minor -lt 11 ]]; then
-    apt-get remove openvswitch-datapath-dkms -y
     apt-get install openvswitch-datapath-dkms -y
 fi
 

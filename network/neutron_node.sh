@@ -12,8 +12,6 @@ ini_set $conf_file "#" "net.ipv4.conf.all.rp_filter" "0"
 ini_set $conf_file "#" "net.ipv4.conf.default.rp_filter" "0"
 sysctl -p
 
-apt-get remove neutron-plugin-ml2 neutron-plugin-openvswitch-agent \
-    neutron-l3-agent neutron-dhcp-agent -y
 apt-get install neutron-plugin-ml2 neutron-plugin-openvswitch-agent \
     neutron-l3-agent neutron-dhcp-agent -y
 major=$(uname -r | cut -d"." -f 1)

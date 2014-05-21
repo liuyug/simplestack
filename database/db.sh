@@ -7,8 +7,6 @@ cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
 stack_conf=$cur_dir/../stack.conf
 
-apt-get remove mysql-server-5.5 -y
-
 DB_ROOT_PASS=`gen_pass`
 ini_set $stack_conf "database" "username" "root"
 ini_set $stack_conf "database" "password" $DB_ROOT_PASS

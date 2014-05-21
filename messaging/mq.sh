@@ -12,7 +12,6 @@ ini_set $stack_conf "rabbit" "host" $RABBIT_SERVER
 ini_set $stack_conf "rabbit" "username" $RABBIT_USER
 ini_set $stack_conf "rabbit" "password" $RABBIT_PASS
 
-apt-get remove rabbitmq-server -y
 apt-get install rabbitmq-server -y
 rabbitmqctl change_password $RABBIT_USER $RABBIT_PASS
 

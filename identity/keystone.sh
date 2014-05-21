@@ -19,7 +19,6 @@ ini_set $stack_conf "keystone" "admin_token" $ADMIN_TOKEN
 ini_set $stack_conf "keystone" "host" "$KEYSTONE_SERVER"
 ini_set $stack_conf "keystone" "endpoint" "http://$KEYSTONE_SERVER:35357/v2.0"
 
-apt-get remove keystone -y
 apt-get install keystone -y
 
 conf_file="/etc/keystone/keystone.conf"
