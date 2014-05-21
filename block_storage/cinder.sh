@@ -34,6 +34,7 @@ RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
 conf_file="/etc/cinder/cinder.conf"
 ini_set $conf_file "database" "connection" \
     "mysql://$CINDER_DBUSER:$CINDER_DBPASS@$DB_SERVER/cinder"
+ini_set $conf_file "DEFAULT" "auth_strategy" "keystone"
 ini_set $conf_file "keystone_authtoken" "auth_uri" "http://$KEYSTONE_SERVER:5000"
 ini_set $conf_file "keystone_authtoken" "auth_host" "$KEYSTONE_SERVER"
 ini_set $conf_file "keystone_authtoken" "auth_port" "35357"
