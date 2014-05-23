@@ -76,4 +76,8 @@ rm -rf /var/lib/nova/nova.sqlite
 
 service nova-compute restart
 
+#nova boot  --key-name default --flavor m1.tiny --image cirros-0.3.2-x86_64 cirros
+#cirros image user/password: cirros:cubswin:)
+#nova boot --flavor m256 --image ubuntu-cloud --key-name default ubuntu256_01
+
 # vim: ts=4 sw=4 et tw=79

@@ -5,7 +5,6 @@ cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
 stack_conf=$cur_dir/../stack.conf
 
-apt-get remove nova-network -y
 apt-get install nova-network -y
 
 conf_file="/etc/nova/nova.conf"

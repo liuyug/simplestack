@@ -26,6 +26,7 @@ ini_set $stack_conf "glance" "password" "$GLANCE_PASS"
 
 apt-get install glance python-glanceclient -y
 
+RABBIT_USER=`ini_get $stack_conf "rabbit" "username"`
 RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
 RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
 
@@ -34,7 +35,10 @@ ini_set $conf_file "database" "connection" \
     "mysql://$GLANCE_DBUSER:$GLANCE_DBPASS@$DB_SERVER/glance"
 ini_set $conf_file "DEFAULT" "rpc_backend" "rabbit"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
+ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
+ini_set $conf_file "DEFAULT" "known_stores" "glance.store.filesystem.Store"
+ini_set $conf_file "DEFAULT" "verbose" "True"
 
 
 conf_file="/etc/glance/glance-registry.conf"

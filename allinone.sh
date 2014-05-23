@@ -102,9 +102,15 @@ image/configure.sh
 #
 #   - nova-api-metadata service.
 #
-#     Accepts metadata requests from instances. The nova-api-metadata service
-#     is generally only used when you run in **multi-host** mode with
-#     nova-network installations.
+#  The metadata service is implemented by either the nova-api service or the
+#  nova-api-metadata service. Accepts metadata requests from instances. The
+#  nova-api-metadata service is generally only used when you run in
+#  **multi-host** mode with nova-network installations.
+
+#  Hosts access the metadata service at 169.254.169.254:80, and this is
+#  translated to metadata_host:metadata_port by an iptables rule established by
+#  the nova-network service. In multi-host mode, you can set metadata_host to
+#  127.0.0.1.
 #
 # + Compute core
 #
@@ -195,6 +201,7 @@ image/configure.sh
 #     available networks, and projects.
 #
 # nova api port: 8774
+# nova metadata api port: 8775
 # nova-novncproxy port: 6080
 
 compute/compute.sh
@@ -204,6 +211,16 @@ compute/compute_node.sh
 # ------------------
 # + OpenStack Networking (neutron)
 # + Legacy networking (nova-network)
+#
+# Every virtual instance is automatically assigned a private IP address. You
+# may optionally assign public IP addresses to instances. OpenStack uses the
+# term "floating IP" to refer to an IP address (typically public) that can be
+# dynamically added to a running virtual instance. OpenStack Compute uses
+# Network Address Translation (NAT) to assign floating IPs to virtual
+# instances.
+#
+# public_interface in nova.conf file to specify which interface the nova-network
+# service will bind public IP addresses.
 #
 # neutron api port: 9696
 network/nova-network.sh

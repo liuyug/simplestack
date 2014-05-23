@@ -12,6 +12,8 @@ CINDER_USER=`ini_get $stack_conf "cinder" "username"`
 CINDER_PASS=`ini_get $stack_conf "cinder" "password"`
 CINDER_DBUSER=`ini_get $stack_conf "cinder" "db_username"`
 CINDER_DBPASS=`ini_get $stack_conf "cinder" "db_password"`
+CINDER_VOLUMES="cinder-volumes"
+ini_set $stack_file "cinder" "cinder_volumes" "$CINDER_VOLUMES"
 
 KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
 KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
@@ -43,6 +45,7 @@ ini_set $conf_file "DEFAULT" "rabbit_port" "5672"
 ini_set $conf_file "DEFAULT" "rabbit_userid" "guest"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
 ini_set $conf_file "DEFAULT" "glance_host" "$GLANCE_SERVER"
+ini_set $conf_file "DEFAULT" "volume_group" "$CINDER_VOLUMES"
 
 service cinder-volume restart
 service tgt restart

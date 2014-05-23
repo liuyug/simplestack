@@ -5,6 +5,7 @@ cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
 stack_conf=$cur_dir/../stack.conf
 
+KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 INTERFACE_NAME="eth0"
 BRIDGE_NAME="br100"
 
@@ -31,6 +32,7 @@ ini_set $conf_file "DEFAULT" "force_dhcp_release" "True"
 ini_set $conf_file "DEFAULT" "flat_network_bridge" "$BRIDGE_NAME"
 ini_set $conf_file "DEFAULT" "flat_interface" "$INTERFACE_NAME"
 ini_set $conf_file "DEFAULT" "public_interface" "$INTERFACE_NAME"
+ini_set $conf_file "DEFAULT" "metadata-host" "$(get_ip_by_hostname $KEYSTONE_SERVER)"
 
 service nova-network restart
 service nova-api-metadata restart
