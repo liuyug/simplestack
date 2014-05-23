@@ -6,6 +6,10 @@ cur_dir=`dirname  $(readlink -fn $0)`
 stack_conf=$cur_dir/../stack.conf
 
 INTERFACE_NAME="eth0"
+BRIDGE_NAME="br100"
+
+ini_set $stack_conf "nova-network" "interface_name" "$INTERFACE_NAME"
+ini_set $stack_conf "nova-network" "bridge_name" "$BRIDGE_NAME"
 
 apt-get install nova-network -y
 # only for multi-host
@@ -24,7 +28,7 @@ ini_set $conf_file "DEFAULT" "multi_host" "True"
 ini_set $conf_file "DEFAULT" "send_arp_for_ha" "True"
 ini_set $conf_file "DEFAULT" "share_dhcp_address" "True"
 ini_set $conf_file "DEFAULT" "force_dhcp_release" "True"
-ini_set $conf_file "DEFAULT" "flat_network_bridge" "br100"
+ini_set $conf_file "DEFAULT" "flat_network_bridge" "$BRIDGE_NAME"
 ini_set $conf_file "DEFAULT" "flat_interface" "$INTERFACE_NAME"
 ini_set $conf_file "DEFAULT" "public_interface" "$INTERFACE_NAME"
 

@@ -85,5 +85,32 @@ ini_comment()
     fi
 }
 
+get_interfaces()
+{
+    ip link show | sed 's/:/ /2' | awk '/^[0-9]/{print $2}'
+}
+
+get_interface_ipaddresses()
+{
+    local interface="$1"
+    ip addr show dev $interface | sed 's~/~ ~' | awk '/ inet /{print $2}'
+}
+
+get_ip_by_hostname()
+{
+    local hostname="$1"
+    resolveip -s $hostname
+}
+
+get_interface_by_ip()
+{
+    local ip="$1"
+    for interface in `get_interfaces`; do
+        if get_interface_ipaddresses $interface | grep -q $ip; then
+            echo $interface
+            break
+        fi
+    done
+}
 
 # vim: ts=4 sw=4 et tw=79

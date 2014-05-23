@@ -250,6 +250,138 @@ dashboard/dashboard.sh
 #
 # cinder api port: 8776
 block_storage/cinder.sh
+block_storage/cinder_node_prerun.sh
+block_storage/cinder_node.sh
 
+# Object Storage service
+# ----------------------
+# The Object Storage service is a highly scalable and durable multi-tenant
+# object storage system for large amounts of unstructured data at low cost
+# through a RESTful HTTP API.
+#
+# It includes the following components:
+#
+# + Proxy servers (swift-proxy-server).
+#
+#   Accepts Object Storage API and raw HTTP requests to upload files, modify
+#   metadata, and create containers. It also serves file or container listings
+#   to web browsers. To improve performance, the proxy server can use an
+#   optional cache usually deployed with memcache.
+#
+# + Account servers (swift-account-server).
+#
+#   Manage accounts defined with the Object Storage service.
+#
+# + Container servers (swift-container-server).
+#
+#   Manage a mapping of containers, or folders, within the Object Storage
+#   service.
+#
+# + Object servers (swift-object-server).
+#
+#   Manage actual objects, such as files, on the storage nodes.
+#
+# + A number of periodic processes.
+#
+#   Performs housekeeping tasks on the large data store. The replication
+#   services ensure consistency and availability through the cluster. Other
+#   periodic processes include auditors, updaters, and reapers.
+#
+# Configurable WSGI middleware that handles authentication. Usually the
+# Identity Service.
 
+# Orchestration service
+# ---------------------
+# The Orchestration service consists of the following components:
+#
+# + heat command-line client.
+#
+#   A CLI that communicates with the heat-api to run AWS CloudFormation APIs.
+#   End developers could also use the Orchestration REST API directly.
+#
+# + heat-api component.
+#
+#   Provides an OpenStack-native REST API that processes API requests by
+#   sending them to the heat-engine over RPC.
+#
+# + heat-api-cfn component.
+#
+#   Provides an AWS Query API that is compatible with AWS CloudFormation and
+#   processes API requests by sending them to the heat-engine over RPC.
+#
+# + heat-engine.
+#
+#   Orchestrates the launching of templates and provides events back to the API
+#   consumer.
+
+# Telemetry service
+# -----------------
+# The system consists of the following basic components:
+#
+# + A compute agent (ceilometer-agent-compute).
+#
+#   Runs on each compute node and polls for resource utilization statistics.
+#   There may be other types of agents in the future, but for now we will focus
+#   on creating the compute agent.
+#
+# + A central agent (ceilometer-agent-central).
+#
+#   Runs on a central management server to poll for resource utilization
+#   statistics for resources not tied to instances or compute nodes.
+#
+# + A collector (ceilometer-collector).
+#
+#   Runs on one or more central management servers to monitor the message
+#   queues (for notifications and for metering data coming from the agent).
+#   Notification messages are processed and turned into metering messages and
+#   sent back out onto the message bus using the appropriate topic. Telemetry
+#   messages are written to the data store without modification.
+#
+# + An alarm notifier (ceilometer-alarm-notifier).
+#
+#   Runs on one or more central management servers to allow setting alarms
+#   based on threshold evaluation for a collection of samples.
+#
+# + A data store.
+#
+#   A database capable of handling concurrent writes (from one or more
+#   collector instances) and reads (from the API server).
+#
+# + An API server (ceilometer-api).
+#
+#   Runs on one or more central management servers to provide access to the
+#   data from the data store.
+#
+# These services communicate by using the standard OpenStack messaging bus.
+# Only the collector and API server have access to the data store.
+
+# Database service
+# ----------------
+# The Database service includes the following components:
+#
+# + python-troveclient command-line client.
+#
+# A CLI that communicates with the trove-api component.
+#
+# + trove-api component.
+#
+#   Provides an OpenStack-native RESTful API that supports JSON to provision
+#   and manage Trove instances.
+#
+# + trove-conductor service.
+#
+#   Runs on the host, and receives messages from guest instances that want to
+#   update information on the host.
+#
+# + trove-taskmanager service.
+#
+#   Instruments the complex system flows that support provisioning instances,
+#   managing the lifecycle of instances, and performing operations on
+#   instances.
+#
+# + trove-guestagent service.
+#
+#   Runs within the guest instance.  Manages and performs operations on the
+#   database itself.
+#
 # vim: ts=4 sw=4 et tw=79
