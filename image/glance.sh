@@ -5,12 +5,14 @@ cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
 stack_conf=$cur_dir/../stack.conf
 
+# generate parameter
 GLANCE_DBUSER="glance"
 GLANCE_DBPASS=`gen_pass`
 GLANCE_SERVER=`hostname -s`
 GLANCE_USER="glance"
 GLANCE_PASS=`gen_pass`
 
+# external parameter
 DB_SERVER=`ini_get $stack_conf "database" "host"`
 DB_ROOT_PASS=`ini_get $stack_conf "database" "password"`
 
@@ -18,17 +20,19 @@ KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
 KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
 
+RABBIT_USER=`ini_get $stack_conf "rabbit" "username"`
+RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
+RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
+
 ini_set $stack_conf "glance" "db_username" $GLANCE_DBUSER
 ini_set $stack_conf "glance" "db_password" $GLANCE_DBPASS
 ini_set $stack_conf "glance" "host" "$GLANCE_SERVER"
 ini_set $stack_conf "glance" "username" "$GLANCE_USER"
 ini_set $stack_conf "glance" "password" "$GLANCE_PASS"
 
+# install db client
+apt-get install python-mysqldb -y
 apt-get install glance python-glanceclient -y
-
-RABBIT_USER=`ini_get $stack_conf "rabbit" "username"`
-RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
-RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
 
 conf_file="/etc/glance/glance-api.conf"
 ini_set $conf_file "database" "connection" \

@@ -5,11 +5,13 @@ cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
 stack_conf=$cur_dir/../stack.conf
 
+# generate parameter
 KEYSTONE_DBUSER="keystone"
 KEYSTONE_DBPASS=`gen_pass`
 KEYSTONE_SERVER=`hostname -s`
 ADMIN_TOKEN=`gen_pass`
 
+# external parameter
 DB_SERVER=`ini_get $stack_conf "database" "host"`
 DB_ROOT_PASS=`ini_get $stack_conf "database" "password"`
 
@@ -19,6 +21,8 @@ ini_set $stack_conf "keystone" "admin_token" $ADMIN_TOKEN
 ini_set $stack_conf "keystone" "host" "$KEYSTONE_SERVER"
 ini_set $stack_conf "keystone" "endpoint" "http://$KEYSTONE_SERVER:35357/v2.0"
 
+# install db client
+apt-get install python-mysqldb -y
 apt-get install keystone -y
 
 conf_file="/etc/keystone/keystone.conf"

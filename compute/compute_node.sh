@@ -1,10 +1,39 @@
 #!/bin/sh
+# nova compute node
 
 cur_dir=`dirname  $(readlink -fn $0)`
 
 . $cur_dir/../functions.sh
 stack_conf=$cur_dir/../stack.conf
 
+# generate parameter
+NOVA_COMPUTE_SERVER=`hostname -s`
+
+# external parameter
+DB_SERVER=`ini_get $stack_conf "database" "host"`
+DB_ROOT_PASS=`ini_get $stack_conf "database" "password"`
+
+NOVA_DBUSER=`ini_get $stack_conf "nova" "db_username"`
+NOVA_DBPASS=`ini_get $stack_conf "nova" "db_password"`
+
+NOVA_USER=`ini_get $stack_conf "nova" "username"`
+NOVA_PASS=`ini_get $stack_conf "nova" "password"`
+NOVA_SERVER=`ini_get $stack_conf "nova" "host"`
+
+GLANCE_SERVER=`ini_get $stack_conf "glance" "host"`
+
+KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
+KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
+KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
+
+RABBIT_USER=`ini_get $stack_conf "rabbit" "username"`
+RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
+RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
+
+ini_set $stack_conf "nova" "host_compute" $NOVA_COMPUTE_SERVER
+
+# install db client
+apt-get install python-mysqldb -y
 apt-get install nova-compute-kvm python-guestfs -y
 
 dpkg-statoverride  --update --add root root 0644 /boot/vmlinuz-$(uname -r)
@@ -19,31 +48,12 @@ dpkg-statoverride --update --add root root 0644 /boot/vmlinuz-\${version}
 EOF
 chmod +x /etc/kernel/postinst.d/statoverride
 
-DB_SERVER=`ini_get $stack_conf "database" "host"`
-DB_ROOT_PASS=`ini_get $stack_conf "database" "password"`
-
-NOVA_DBUSER=`ini_get $stack_conf "nova" "db_username"`
-NOVA_DBPASS=`ini_get $stack_conf "nova" "db_password"`
-NOVA_USER=`ini_get $stack_conf "nova" "username"`
-NOVA_PASS=`ini_get $stack_conf "nova" "password"`
-NOVA_SERVER=`ini_get $stack_conf "nova" "host"`
-NOVA_COMPUTE_SERVER=`hostname -s`
-ini_set $stack_conf "nova" "host_compute" $NOVA_COMPUTE_SERVER
-
-GLANCE_SERVER=`ini_get $stack_conf "glance" "host"`
-
-KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
-KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
-KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
-
-RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
-RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
-
 conf_file="/etc/nova/nova.conf"
 ini_set $conf_file "database" "connection" \
     "mysql://$NOVA_DBUSER:$NOVA_DBPASS@$DB_SERVER/nova"
 ini_set $conf_file "DEFAULT" "rpc_backend" "rabbit"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
+ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
 ini_set $conf_file "DEFAULT" "auth_strategy" "keystone"
 ini_set $conf_file "keystone_authtoken" "auth_uri" "http://$KEYSTONE_SERVER:5000"

@@ -5,13 +5,14 @@ cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
 stack_conf=$cur_dir/../stack.conf
 
-
+# generate parameter
 CINDER_DBUSER="cinder"
 CINDER_DBPASS=`gen_pass`
 CINDER_USER="cinder"
 CINDER_PASS=`gen_pass`
 CINDER_SERVER=`hostname -s`
 
+# external parameter
 DB_SERVER=`ini_get $stack_conf "database" "host"`
 DB_ROOT_PASS=`ini_get $stack_conf "database" "password"`
 
@@ -19,17 +20,18 @@ KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
 KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
 
+RABBIT_USER=`ini_get $stack_conf "rabbit" "username"`
+RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
+RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
+
 ini_set $stack_conf "cinder" "db_username" $CINDER_DBUSER
 ini_set $stack_conf "cinder" "db_password" $CINDER_DBPASS
 ini_set $stack_conf "cinder" "host" $CINDER_SERVER
 ini_set $stack_conf "cinder" "username" $CINDER_USER
 ini_set $stack_conf "cinder" "password" $CINDER_PASS
 
-
 apt-get install cinder-api cinder-scheduler -y
 
-RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
-RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
 
 conf_file="/etc/cinder/cinder.conf"
 ini_set $conf_file "database" "connection" \
@@ -46,7 +48,7 @@ ini_set $conf_file "DEFAULT" "rpc_backend" \
     "cinder.openstack.common.rpc.impl_kombu"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
 ini_set $conf_file "DEFAULT" "rabbit_port" "5672"
-ini_set $conf_file "DEFAULT" "rabbit_userid" "guest"
+ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
 
 

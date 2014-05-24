@@ -1,4 +1,5 @@
 #!/bin/sh
+# mysql db
 
 set -e
 

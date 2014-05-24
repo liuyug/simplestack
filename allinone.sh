@@ -224,8 +224,6 @@ compute/compute_node.sh
 #
 # neutron api port: 9696
 network/nova-network.sh
-network/nova-network_compute_node.sh
-network/nova-network_configure.sh
 
 # Dashboard service
 # -----------------

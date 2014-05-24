@@ -5,12 +5,12 @@ cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
 stack_conf=$cur_dir/../stack.conf
 
-KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
-INTERFACE_NAME="eth0"
-BRIDGE_NAME="br100"
+# generate parameter
+INTERFACE_NAME=`ini_get $stack_conf "nova-network" "interface_name"`
+BRIDGE_NAME=`ini_get $stack_conf "nova-network" "bridge_name"`
 
-ini_set $stack_conf "nova-network" "interface_name" "$INTERFACE_NAME"
-ini_set $stack_conf "nova-network" "bridge_name" "$BRIDGE_NAME"
+# external parameter
+KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 
 apt-get install nova-network -y
 # only for multi-host
