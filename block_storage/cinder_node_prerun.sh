@@ -14,9 +14,8 @@ apt-get install lvm2 -y
 # ...
 # }
 CINDER_VOLUMES="cinder_volumes_file"
-dd if=/dev/zero of=$cur_dir/$CINDER_VOLUMES bs=1G count=10
-losetup -f $cur_dir/$CINDER_VOLUMES
-CINDER_DEVICE=`losetup -j $cur_dir/$CINDER_VOLUMES | cut -d":" -f1`
+truncate -s 1GB $cur_dir/$CINDER_VOLUMES
+CINDER_DEVICE=`losetup --show -f $cur_dir/$CINDER_VOLUMES`
 pvcreate $CINDER_DEVICE
 vgcreate cinder-volumes $CINDER_DEVICE
 

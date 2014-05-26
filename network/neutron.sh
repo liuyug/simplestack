@@ -5,7 +5,7 @@ cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
 stack_conf=$cur_dir/../stack.conf
 
-
+# generate parameter
 NEUTRON_DBUSER="neutron"
 NEUTRON_DBPASS=`gen_pass`
 NEUTRON_USER="neutron"
@@ -13,12 +13,24 @@ NEUTRON_PASS=`gen_pass`
 NEUTRON_SERVER=`hostname -s`
 METADATA_SECRET=`gen_pass`
 
+# external parameter
 DB_SERVER=`ini_get $stack_conf "database" "host"`
 DB_ROOT_PASS=`ini_get $stack_conf "database" "password"`
 
 KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
 KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
+
+RABBIT_USER=`ini_get $stack_conf "rabbit" "username"`
+RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
+RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
+
+NOVA_SERVER=`ini_get $stack_conf "nova" "host"`
+NOVA_USER=`ini_get $stack_conf "nova" "username"`
+NOVA_PASS=`ini_get $stack_conf "nova" "password"`
+
+SERVICE_TENANT_ID=$(keystone tenant-list | awk '/ service / {print $2}')
+
 
 ini_set $stack_conf "neutron" "db_username" $NEUTRON_DBUSER
 ini_set $stack_conf "neutron" "db_password" $NEUTRON_DBPASS
@@ -54,13 +66,6 @@ keystone endpoint-create \
 
 apt-get install neutron-server neutron-plugin-ml2 -y
 
-RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
-RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
-NOVA_SERVER=`ini_get $stack_conf "nova" "host"`
-NOVA_USER=`ini_get $stack_conf "nova" "username"`
-NOVA_PASS=`ini_get $stack_conf "nova" "password"`
-SERVICE_TENANT_ID=$(keystone tenant-list | awk '/ service / {print $2}')
-
 conf_file="/etc/neutron/neutron.conf"
 # Configure Networking to use the database
 ini_set $conf_file "database" "connection" \
@@ -68,6 +73,7 @@ ini_set $conf_file "database" "connection" \
 # Configure Networking to use the message broker
 ini_set $conf_file "DEFAULT" "rpc_backend" "neutron.openstack.common.rpc.impl_kombu"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
+ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
 # Configure Networking to use the Identity service for authentication
 ini_set $conf_file "DEFAULT" "auth_strategy" "keystone"

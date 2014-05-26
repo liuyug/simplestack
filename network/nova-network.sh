@@ -41,7 +41,8 @@ service nova-network restart
 NETWORK_CIDR="10.0.1.0/24"
 
 nova net-delete $(nova net-list | awk '/ demo-net / { printf $2}')
-nova network-create demo-net --bridge br100 --multi-host T \
+# nova only identify "public" and "private"
+nova network-create private --bridge br100 --multi-host T \
     --fixed-range-v4 "$NETWORK_CIDR"
 
 # permit icmp
