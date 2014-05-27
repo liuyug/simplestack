@@ -1,5 +1,4 @@
 #!/bin/sh
-# test!!!!!!!!!!!!
 
 cur_dir=`dirname  $(readlink -fn $0)`
 
@@ -20,6 +19,10 @@ KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
 KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
 
+RABBIT_USER=`ini_get $stack_conf "rabbit" "username"`
+RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
+RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
+
 ini_set $stack_conf "ceilometer" "db_username" $CEILOMETER_DBUSER
 ini_set $stack_conf "ceilometer" "db_password" $CEILOMETER_DBPASS
 ini_set $stack_conf "ceilometer" "host" $CEILOMETER_SERVER
@@ -37,19 +40,16 @@ ini_set $conf_file "#" "bind_ip" "$KEYSTONE_SERVER"
 
 service mongodb restart
 
-mongo --host $KEYSTONE_SERVER --eval "
+mongo --host $CEILOMETER_SERVER --eval "
 db = db.getSiblingDB(\"ceilometer\");
 db.addUser({user: \"$CEILOMETER_USER\",
 pwd: \"$CEILOMETER_DBPASS\",
 roles: [ 'readWrite', 'dbAdmin' ]})"
 
 
-RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
-RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
-
 conf_file="/etc/ceilometer/ceilometer.conf"
 ini_set $conf_file "database" "connection" \
-    "mongodb://$CEILOMETER_DBUSER:$CEILOMETER_DBPASS@$DB_SERVER:27017/ceilometer"
+    "mongodb://$CEILOMETER_DBUSER:$CEILOMETER_DBPASS@$CEILOMETER_SERVER:27017/ceilometer"
 ini_set $conf_file "publisher" "metering_secret" "$CEILOMETER_TOKEN"
 ini_set $conf_file "DEFAULT" "auth_strategy" "keystone"
 ini_set $conf_file "keystone_authtoken" "auth_uri" "http://$KEYSTONE_SERVER:5000"
@@ -60,6 +60,7 @@ ini_set $conf_file "keystone_authtoken" "admin_tenant_name" "service"
 ini_set $conf_file "keystone_authtoken" "admin_user" "$CEILOMETER_USER"
 ini_set $conf_file "keystone_authtoken" "admin_password" "$CEILOMETER_PASS"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
+ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
 ini_set $conf_file "service_credentials" "os_auth_url" \
     "http://$KEYSTONE_SERVER:5000/v2.0"

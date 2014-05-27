@@ -14,12 +14,11 @@ KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
 KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
 
-apt-get install ceilometer-agent-compute -y
-
-
+RABBIT_USER=`ini_get $stack_conf "rabbit" "username"`
 RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
 RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
 
+apt-get install ceilometer-agent-compute -y
 
 conf_file="/etc/nova/nova.conf"
 ini_set $conf_file "DEFAULT" "instance_usage_audit" "True"
@@ -35,6 +34,7 @@ service nova-compute restart
 conf_file="/etc/ceilometer/ceilometer.conf"
 ini_set $conf_file "publisher" "metering_secret" "$CEILOMETER_TOKEN"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
+ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
 ini_set $conf_file "DEFAULT" "auth_strategy" "keystone"
 ini_set $conf_file "keystone_authtoken" "auth_uri" "http://$KEYSTONE_SERVER:5000"

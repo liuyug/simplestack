@@ -1,5 +1,4 @@
 #!/bin/sh
-# test!!!!!!!!!!!!
 
 cur_dir=`dirname  $(readlink -fn $0)`
 
@@ -28,6 +27,7 @@ ini_set $stack_conf "heat" "password" $HEAT_PASS
 
 apt-get install heat-api heat-api-cfn heat-engine -y
 
+RABBIT_USER=`ini_get $stack_conf "rabbit" "username"`
 RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
 RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
 
@@ -44,6 +44,7 @@ ini_set $conf_file "keystone_authtoken" "admin_user" "$HEAT_USER"
 ini_set $conf_file "keystone_authtoken" "admin_password" "$HEAT_PASS"
 ini_set $conf_file "ec2authtoken" "auth_uri" "http://$KEYSTONE_SERVER:5000/v2.0"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
+ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
 ini_set $conf_file "DEFAULT" "heat_metadata_server_url" \
     "http://$KEYSTONE_SERVER:8000"
@@ -58,7 +59,7 @@ GRANT ALL PRIVILEGES ON heat.* TO '$HEAT_DBUSER'@'localhost' IDENTIFIED BY '$HEA
 GRANT ALL PRIVILEGES ON heat.* TO '$HEAT_DBUSER'@'%' IDENTIFIED BY '$HEAT_DBPASS';
 EOF
 
-su -s /bin/sh -c "heat-manage db sync" heat
+su -s /bin/sh -c "heat-manage db_sync" heat
 
 export OS_SERVICE_TOKEN=$KEYSTONE_TOKEN
 export OS_SERVICE_ENDPOINT=$KEYSTONE_ENDPOINT
@@ -76,6 +77,7 @@ keystone endpoint-create \
     --publicurl=http://$HEAT_SERVER:8004/v1/%\(tenant_id\)s \
     --internalurl=http://$HEAT_SERVER:8004/v1/%\(tenant_id\)s \
     --adminurl=http://$HEAT_SERVER:8004/v1/%\(tenant_id\)s
+keystone service-delete heat-cfn
 keystone service-create --name=heat-cfn --type=cloudformation \
     --description="Orchestration CloudFormation"
 keystone endpoint-create \
@@ -83,7 +85,7 @@ keystone endpoint-create \
     --publicurl=http://$HEAT_SERVER:8000/v1 \
     --internalurl=http://$HEAT_SERVER:8000/v1 \
     --adminurl=http://$HEAT_SERVER:8000/v1
-
+keystone role-delete heat_stack_user
 keystone role-create --name heat_stack_user
 
 

@@ -20,6 +20,14 @@ KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
 KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
 
+RABBIT_USER=`ini_get $stack_conf "rabbit" "username"`
+RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
+RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
+
+NOVA_SERVER=`ini_get $stack_conf "nova" "host"`
+CINDER_SERVER=`ini_get $stack_conf "cinder" "host"`
+SWIFT_SERVER=`ini_get $stack_conf "swift" "host"`
+
 ini_set $stack_conf "trove" "db_username" $TROVE_DBUSER
 ini_set $stack_conf "trove" "db_password" $TROVE_DBPASS
 ini_set $stack_conf "trove" "host" $TROVE_SERVER
@@ -28,10 +36,6 @@ ini_set $stack_conf "trove" "password" $TROVE_PASS
 
 apt-get install python-trove python-troveclient python-glanceclient \
       trove-common trove-api trove-taskmanager -y
-
-RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
-RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
-
 
 conf_file="/etc/trove/trove.conf"
 ini_set $conf_file "DEFAULT" "trove_auth_url" "http://$KEYSTONE_SERVER:5000/v2.0"
@@ -42,6 +46,7 @@ ini_set $conf_file "DEFAULT" "sql_connection" \
     "$TROVE_DBUSER:$TROVE_DBPASS@$DB_SERVER/trove"
 ini_set $conf_file "DEFAULT" "notifier_queue_hostname" "$KEYSTONE_SERVER"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
+ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
 
 conf_file="/etc/trove/trove-taskmanager.conf"
@@ -53,6 +58,7 @@ ini_set $conf_file "DEFAULT" "sql_connection" \
     "$TROVE_DBUSER:$TROVE_DBPASS@$DB_SERVER/trove"
 ini_set $conf_file "DEFAULT" "notifier_queue_hostname" "$KEYSTONE_SERVER"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
+ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
 
 conf_file="/etc/trove/trove-conductor.conf"
@@ -64,6 +70,7 @@ ini_set $conf_file "DEFAULT" "sql_connection" \
     "$TROVE_DBUSER:$TROVE_DBPASS@$DB_SERVER/trove"
 ini_set $conf_file "DEFAULT" "notifier_queue_hostname" "$KEYSTONE_SERVER"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
+ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
 
 
@@ -90,6 +97,7 @@ ini_set $conf_file "DEFAULT" "nova_proxy_admin_tenant_name" "service"
 
 conf_file="/etc/trove/trove-guestagent.conf"
 ini_set $conf_file "#" "rabbit_host" "$RABBIT_SERVER"
+ini_set $conf_file "#" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "#" "rabbit_password" "$RABBIT_PASS"
 ini_set $conf_file "#" "nova_proxy_admin_user" "admin"
 ini_set $conf_file "#" "nova_proxy_admin_pass" "ADMIN_PASS"
@@ -119,6 +127,7 @@ keystone user-create --name=$TROVE_USER --pass=$TROVE_PASS \
     --email=$TROVE_USER@$TROVE_SERVER
 keystone user-role-add --user=$TROVE_USER --tenant=service --role=admin
 
+keystone service-delete trove
 keystone service-create --name=trove --type=database \
     --description="OpenStack Database Service"
 keystone endpoint-create \
