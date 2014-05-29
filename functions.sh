@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -o xtrace
+
 gen_pass()
 {
     local length=10

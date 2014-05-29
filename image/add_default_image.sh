@@ -6,8 +6,8 @@ cur_dir=`dirname  $(readlink -fn $0)`
 
 # upload local file
 # "file image_file" to check file format
-$IMG_FILE="/tmp/cirros.img"
-$IMG_URL="http://cdn.download.cirros-cloud.net/0.3.2/cirros-0.3.2-x86_64-disk.img"
+IMG_FILE="/tmp/cirros.img"
+IMG_URL="http://cdn.download.cirros-cloud.net/0.3.2/cirros-0.3.2-x86_64-disk.img"
 if [ ! -f "$IMG_FILE" ]; then
     wget -O $IMG_FILE $IMG_URL
 fi

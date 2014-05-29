@@ -30,7 +30,7 @@ db_conf_file="/etc/mysql/my.cnf"
 ini_set $db_conf_file "mysqld" "bind-address" $DB_SERVER
 ini_set $db_conf_file "mysqld" "default-storage-engine" "innodb"
 ini_set $db_conf_file "mysqld" "collation-server" "utf8_general_ci"
-ini_set $db_conf_file "mysqld" "init-connect" "'SET NAMES utf8'"
+ini_set $db_conf_file "mysqld" "init-connect" "\"SET NAMES utf8\""
 ini_set $db_conf_file "mysqld" "character-set-server" "utf8"
 
 # mysql_secure_installation
