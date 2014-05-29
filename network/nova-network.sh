@@ -5,6 +5,10 @@ cur_dir=`dirname  $(readlink -fn $0)`
 . $cur_dir/../functions.sh
 stack_conf=$cur_dir/../stack.conf
 
+KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
+KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
+KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
+
 # generate parameter
 INTERFACE_NAME="eth0"
 BRIDGE_NAME="br100"
@@ -36,6 +40,9 @@ service nova-scheduler restart
 service nova-conductor restart
 
 service nova-network restart
+
+export OS_SERVICE_TOKEN=$KEYSTONE_TOKEN
+export OS_SERVICE_ENDPOINT=$KEYSTONE_ENDPOINT
 
 # add demo-net network
 NETWORK_CIDR="10.0.1.0/24"

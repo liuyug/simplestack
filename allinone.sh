@@ -4,6 +4,11 @@
 # Install OpenStack on Ubuntu
 # ===========================
 
+export OS_USERNAME=
+export OS_PASSWORD=
+export OS_TENANT_NAME=
+export OS_AUTH_URL=
+
 set -e
 
 # Install NTP
@@ -21,7 +26,6 @@ ntp/ntp.sh
 # install the MySQL Python library on any additional nodes that access MySQL.
 
 database/db.sh 127.0.0.1
-database/db_client.sh
 
 # OpenStack packages
 # ------------------
@@ -35,7 +39,7 @@ database/db_client.sh
 #
 # .. _`Ubuntu Cloud Archive`: https://wiki.ubuntu.com/ServerTeam/CloudArchive
 
-ubuntu_repo.sh
+./ubuntu_repo.sh
 
 # Messaging server
 # ----------------

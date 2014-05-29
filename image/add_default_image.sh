@@ -6,17 +6,19 @@ cur_dir=`dirname  $(readlink -fn $0)`
 
 # upload local file
 # "file image_file" to check file format
-wget -O /tmp/cirros.img \
-    http://cdn.download.cirros-cloud.net/0.3.2/cirros-0.3.2-x86_64-disk.img
+$IMG_FILE="/tmp/cirros.img"
+$IMG_URL="http://cdn.download.cirros-cloud.net/0.3.2/cirros-0.3.2-x86_64-disk.img"
+if [ ! -f "$IMG_FILE" ]; then
+    wget -O $IMG_FILE $IMG_URL
+fi
+glance image-delete "cirros-x86_64" 
 glance image-create \
-    --name "cirros-0.3.2-x86_64" \
+    --name "cirros-x86_64" \
     --disk-format qcow2 \
     --container-format bare \
     --is-public True \
     --progress \
-    < /tmp/cirros.img
-rm -rf /tmp/cirros.img
-
+    < "$IMG_FILE"
 
 # upload remote file
 # glance image-create \

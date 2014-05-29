@@ -16,7 +16,7 @@ ADMIN_PASS=`gen_pass`
 ADMIN_EMAIL="admin@$KEYSTONE_SERVER"
 
 ini_set $stack_conf "keystone" "admin_username" "admin"
-ini_set $stack_conf "keystone" "admin_password" $ADMIN_PASS
+ini_set $stack_conf "keystone" "admin_password" "$ADMIN_PASS"
 
 keystone user-delete admin
 keystone user-create --name=admin --pass=$ADMIN_PASS --email=$ADMIN_EMAIL
@@ -31,16 +31,13 @@ keystone user-role-add --user=admin --tenant=admin --role=admin
 
 keystone user-role-add --user=admin --role=_member_ --tenant=admin
 
-$cur_dir/../mkrc.sh "$KEYSTONE_SERVER" "admin" "$ADMIN_PASS" "admin" \
-    > $cur_dir/../admin-openrc.sh
-
 # create noraml user
 
 DEMO_PASS=`gen_pass`
 DEMO_EMAIL="demo@$KEYSTONE_SERVER"
 
 ini_set $stack_conf "keystone" "demo_username" "demo"
-ini_set $stack_conf "keystone" "demo_password" $ADMIN_PASS
+ini_set $stack_conf "keystone" "demo_password" "$DEMO_PASS"
 
 keystone user-delete demo
 keystone user-create --name=demo --pass=$DEMO_PASS --email=$DEMO_EMAIL
@@ -49,9 +46,6 @@ keystone tenant-delete demo
 keystone tenant-create --name=demo --description="Demo Tenant"
 
 keystone user-role-add --user=demo --role=_member_ --tenant=demo
-
-$cur_dir/../mkrc.sh "$KEYSTONE_SERVER" "demo" "$DEMO_PASS" "demo" \
-    > $cur_dir/../demo-openrc.sh
 
 # create service tenant
 keystone tenant-delete service
@@ -62,16 +56,23 @@ keystone service-delete keystone
 keystone service-create --name=keystone --type=identity \
     --description="OpenStack Identity"
 
-#keystone endpoint-delete
 keystone endpoint-create \
     --service-id=$(keystone service-list | awk '/ identity / {print $2}') \
     --publicurl=http://$KEYSTONE_SERVER:5000/v2.0 \
     --internalurl=http://$KEYSTONE_SERVER:5000/v2.0 \
     --adminurl=http://$KEYSTONE_SERVER:35357/v2.0
 
-
+# check
+keystone user-list
 
 unset OS_SERVICE_TOKEN
 unset OS_SERVICE_ENDPOINT
+
+$cur_dir/../mkrc.sh "$KEYSTONE_SERVER" "admin" "$ADMIN_PASS" "admin" \
+    > $cur_dir/../admin-openrc.sh
+
+$cur_dir/../mkrc.sh "$KEYSTONE_SERVER" "demo" "$DEMO_PASS" "demo" \
+    > $cur_dir/../demo-openrc.sh
+
 
 # vim: ts=4 sw=4 et tw=79
