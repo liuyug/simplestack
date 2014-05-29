@@ -11,6 +11,13 @@ KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
 export OS_SERVICE_TOKEN=$KEYSTONE_TOKEN
 export OS_SERVICE_ENDPOINT=$KEYSTONE_ENDPOINT
 
+echo -n "Wait keystone service ready"
+while [ keystone user-list 2>&1 > /dev/null ]; do
+    echo -n "."
+    sleep 1s
+done
+echo ""
+
 # create admin
 ADMIN_PASS=`gen_pass`
 ADMIN_EMAIL="admin@$KEYSTONE_SERVER"
