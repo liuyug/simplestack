@@ -1,5 +1,7 @@
 #!/bin/sh
 
+apt-get install python python-setuptools python-pip -y
+
 apt-get install software-properties-common -y
 apt-get install python-software-properties -y
 

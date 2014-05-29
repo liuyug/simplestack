@@ -33,6 +33,9 @@ ini_set()
     local section="$2"
     local option="$3"
     local value="$4"
+    if [ ! -f "$file" ]; then
+        touch "$file"
+    fi
     if [ ! "$section" = "#" ]; then
         if ! grep -q "^\[$section\]" "$file"; then
             # add section

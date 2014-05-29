@@ -19,12 +19,17 @@ DB_ROOT_PASS=`ini_get $stack_conf "database" "password"`
 KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
 KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
+KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
+KEYSTONE_ADMIN_USER=`ini_get $stack_conf "keystone" "admin_username"`
+KEYSTONE_ADMIN_PASS=`ini_get $stack_conf "keystone" "admin_password"`
 
 RABBIT_USER=`ini_get $stack_conf "rabbit" "username"`
 RABBIT_PASS=`ini_get $stack_conf "rabbit" "password"`
 RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
 
 NOVA_SERVER=`ini_get $stack_conf "nova" "host"`
+NOVA_ADMIN_USER=`ini_get $stack_conf "nova" "username"`
+NOVA_ADMIN_PASS=`ini_get $stack_conf "nova" "password"`
 CINDER_SERVER=`ini_get $stack_conf "cinder" "host"`
 SWIFT_SERVER=`ini_get $stack_conf "swift" "host"`
 
@@ -38,49 +43,54 @@ apt-get install python-trove python-troveclient python-glanceclient \
       trove-common trove-api trove-taskmanager -y
 
 conf_file="/etc/trove/trove.conf"
+ini_set $conf_file "DEFAULT" "log_dir" "/var/log/trove"
 ini_set $conf_file "DEFAULT" "trove_auth_url" "http://$KEYSTONE_SERVER:5000/v2.0"
 ini_set $conf_file "DEFAULT" "nova_compute_url" "http://$NOVA_SERVER:8774/v2"
 ini_set $conf_file "DEFAULT" "cinder_url" "http://$CINDER_SERVER:8776/v1"
 ini_set $conf_file "DEFAULT" "swift_url" "http://$SWIFT_SERVER:8080/v1/AUTH_"
 ini_set $conf_file "DEFAULT" "sql_connection" \
-    "$TROVE_DBUSER:$TROVE_DBPASS@$DB_SERVER/trove"
+    "mysql://$TROVE_DBUSER:$TROVE_DBPASS@$DB_SERVER/trove"
 ini_set $conf_file "DEFAULT" "notifier_queue_hostname" "$KEYSTONE_SERVER"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
 ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
+ini_set $conf_file "DEFAULT" "verbose" "true"
 
 conf_file="/etc/trove/trove-taskmanager.conf"
+ini_set $conf_file "DEFAULT" "log_dir" "/var/log/trove"
 ini_set $conf_file "DEFAULT" "trove_auth_url" "http://$KEYSTONE_SERVER:5000/v2.0"
 ini_set $conf_file "DEFAULT" "nova_compute_url" "http://$NOVA_SERVER:8774/v2"
 ini_set $conf_file "DEFAULT" "cinder_url" "http://$CINDER_SERVER:8776/v1"
 ini_set $conf_file "DEFAULT" "swift_url" "http://$SWIFT_SERVER:8080/v1/AUTH_"
 ini_set $conf_file "DEFAULT" "sql_connection" \
-    "$TROVE_DBUSER:$TROVE_DBPASS@$DB_SERVER/trove"
+    "mysql://$TROVE_DBUSER:$TROVE_DBPASS@$DB_SERVER/trove"
 ini_set $conf_file "DEFAULT" "notifier_queue_hostname" "$KEYSTONE_SERVER"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
 ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
+ini_set $conf_file "DEFAULT" "verbose" "true"
 
 conf_file="/etc/trove/trove-conductor.conf"
+ini_set $conf_file "DEFAULT" "log_dir" "/var/log/trove"
 ini_set $conf_file "DEFAULT" "trove_auth_url" "http://$KEYSTONE_SERVER:5000/v2.0"
 ini_set $conf_file "DEFAULT" "nova_compute_url" "http://$NOVA_SERVER:8774/v2"
 ini_set $conf_file "DEFAULT" "cinder_url" "http://$CINDER_SERVER:8776/v1"
 ini_set $conf_file "DEFAULT" "swift_url" "http://$SWIFT_SERVER:8080/v1/AUTH_"
 ini_set $conf_file "DEFAULT" "sql_connection" \
-    "$TROVE_DBUSER:$TROVE_DBPASS@$DB_SERVER/trove"
+    "mysql://$TROVE_DBUSER:$TROVE_DBPASS@$DB_SERVER/trove"
 ini_set $conf_file "DEFAULT" "notifier_queue_hostname" "$KEYSTONE_SERVER"
 ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
 ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
 ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
-
+ini_set $conf_file "DEFAULT" "verbose" "true"
 
 conf_file="/etc/trove/api-paste.ini"
 ini_set $conf_file "filter:authtoken" "auth_host" "$KEYSTONE_SERVER"
 ini_set $conf_file "filter:authtoken" "auth_port" "35357"
 ini_set $conf_file "filter:authtoken" "auth_protocol" "http"
-ini_set $conf_file "filter:authtoken" "admin_user" "$TROVE_USER"
-ini_set $conf_file "filter:authtoken" "admin_password" "$TROVE_PASS"
-ini_set $conf_file "filter:authtoken" "admin_token" "$TROVE_TOKEN"
+ini_set $conf_file "filter:authtoken" "admin_user" "$KEYSTONE_ADMIN_USER"
+ini_set $conf_file "filter:authtoken" "admin_password" "$KEYSTONE_ADMIN_PASS"
+ini_set $conf_file "filter:authtoken" "admin_token" "$KEYSTONE_TOKEN"
 ini_set $conf_file "filter:authtoken" "admin_tenant_name" "service"
 ini_set $conf_file "filter:authtoken" "signing_dir" "/var/cache/trove"
 
@@ -91,18 +101,18 @@ ini_set $conf_file "DEFAULT" "add_addresses" "True"
 ini_set $conf_file "DEFAULT" "network_label_regex" "^NETWORK_LABEL$"
 
 conf_file="/etc/trove/trove-taskmanager.conf"
-ini_set $conf_file "DEFAULT" "nova_proxy_admin_user" "admin"
-ini_set $conf_file "DEFAULT" "nova_proxy_admin_pass" "ADMIN_PASS"
+ini_set $conf_file "DEFAULT" "nova_proxy_admin_user" "$KEYSTONE_ADMIN_USER"
+ini_set $conf_file "DEFAULT" "nova_proxy_admin_pass" "$KEYSTONE_ADMIN_PASS"
 ini_set $conf_file "DEFAULT" "nova_proxy_admin_tenant_name" "service"
 
 conf_file="/etc/trove/trove-guestagent.conf"
-ini_set $conf_file "#" "rabbit_host" "$RABBIT_SERVER"
-ini_set $conf_file "#" "rabbit_userid" "$RABBIT_USER"
-ini_set $conf_file "#" "rabbit_password" "$RABBIT_PASS"
-ini_set $conf_file "#" "nova_proxy_admin_user" "admin"
-ini_set $conf_file "#" "nova_proxy_admin_pass" "ADMIN_PASS"
-ini_set $conf_file "#" "nova_proxy_admin_tenant_name" "service"
-ini_set $conf_file "#" "trove_auth_url" "http://$KEYSTONE_SERVER:35357/v2.0"
+ini_set $conf_file "DEFAULT" "rabbit_host" "$RABBIT_SERVER"
+ini_set $conf_file "DEFAULT" "rabbit_userid" "$RABBIT_USER"
+ini_set $conf_file "DEFAULT" "rabbit_password" "$RABBIT_PASS"
+ini_set $conf_file "DEFAULT" "nova_proxy_admin_user" "$KEYSTONE_ADMIN_USER"
+ini_set $conf_file "DEFAULT" "nova_proxy_admin_pass" "$KEYSTONE_ADMIN_PASS"
+ini_set $conf_file "DEFAULT" "nova_proxy_admin_tenant_name" "service"
+ini_set $conf_file "DEFAULT" "trove_auth_url" "http://$KEYSTONE_SERVER:35357/v2.0"
 
 
 mysql -u root -p$DB_ROOT_PASS <<EOF

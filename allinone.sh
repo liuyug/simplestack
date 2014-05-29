@@ -304,6 +304,8 @@ block_storage/cinder_node.sh
 #
 # Configurable WSGI middleware that handles authentication. Usually the
 # Identity Service.
+object_storage/swift.sh
+object_storage/swift_storage_node.sh
 
 # Orchestration service
 # ---------------------
@@ -328,6 +330,7 @@ block_storage/cinder_node.sh
 #
 #   Orchestrates the launching of templates and provides events back to the API
 #   consumer.
+orchestration/heat.sh
 
 # Telemetry service
 # -----------------
@@ -369,6 +372,11 @@ block_storage/cinder_node.sh
 #
 # These services communicate by using the standard OpenStack messaging bus.
 # Only the collector and API server have access to the data store.
+telemetry/ceilometer.sh
+telemetry/ceilometer_image_node.sh
+telemetry/ceilometer_compute_node.sh
+telemetry/ceilometer_block_node.sh
+telemetry/ceilometer_object_node.sh
 
 # Database service
 # ----------------
@@ -398,5 +406,7 @@ block_storage/cinder_node.sh
 #
 #   Runs within the guest instance.  Manages and performs operations on the
 #   database itself.
+echo "There are many bug in Icehouse. Wait next generation!"
+
 #
 # vim: ts=4 sw=4 et tw=79
