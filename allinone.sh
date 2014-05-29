@@ -83,7 +83,7 @@ identity/configure.sh
 # glance-registry port: 6784
 
 image/glance.sh
-image/configure.sh
+image/add_default_image.sh
 
 # Compute service
 # ---------------
