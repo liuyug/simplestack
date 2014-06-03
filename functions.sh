@@ -4,6 +4,8 @@ set -o xtrace
 
 gen_pass()
 {
+    local oxtrace=`set +o | grep xtrace`
+    set +o xtrace
     local length=10
     if [ "x"$1 != "x" ]; then
         length=$1
@@ -14,10 +16,13 @@ gen_pass()
         echo "Could not find \"openssl\"."
         exit 1
     fi
+    $oxtrace
 }
 
 ini_hasoption()
 {
+    local oxtrace=`set +o | grep xtrace`
+    set +o xtrace
     local file="$1"
     local section="$2"
     local option="$3"
@@ -27,10 +32,13 @@ ini_hasoption()
         line=`sed -n -e "/^\[$section\]/,/^\[.*\]/{/^$option[ \t]*=/p}" "$file"`
     fi
     [ -n "$line" ]
+    $oxtrace
 }
 
 ini_set()
 {
+    local oxtrace=`set +o | grep xtrace`
+    set +o xtrace
     local file="$1"
     local section="$2"
     local option="$3"
@@ -62,10 +70,13 @@ $option=$value
             " "$file"
         fi
     fi
+    $oxtrace
 }
 
 ini_get()
 {
+    local oxtrace=`set +o | grep xtrace`
+    set +o xtrace
     local file="$1"
     local section="$2"
     local option="$3"
@@ -76,10 +87,13 @@ ini_get()
         line=`sed -n -e "/^\[$section\]/,/^\[.*\]/{/^$option[ \t]*=/p}" "$file"`
     fi
     echo ${line#*=}
+    $oxtrace
 }
 
 ini_comment()
 {
+    local oxtrace=`set +o | grep xtrace`
+    set +o xtrace
     local file="$1"
     local section="$2"
     local option="$3"
@@ -88,27 +102,39 @@ ini_comment()
     else
         sed -i -e "/^\[$section\]/,/^\[.*\]/{s~^\($option[ \t]*=.*$\)~#\1~}" "$file"
     fi
+    $oxtrace
 }
 
 get_interfaces()
 {
+    local oxtrace=`set +o | grep xtrace`
+    set +o xtrace
     ip link show | sed 's/:/ /2' | awk '/^[0-9]/{print $2}'
+    $oxtrace
 }
 
 get_interface_ipaddresses()
 {
+    local oxtrace=`set +o | grep xtrace`
+    set +o xtrace
     local interface="$1"
     ip addr show dev $interface | sed 's~/~ ~' | awk '/ inet /{print $2}'
+    $oxtrace
 }
 
 get_ip_by_hostname()
 {
+    local oxtrace=`set +o | grep xtrace`
+    set +o xtrace
     local hostname="$1"
     resolveip -s $hostname
+    $oxtrace
 }
 
 get_interface_by_ip()
 {
+    local oxtrace=`set +o | grep xtrace`
+    set +o xtrace
     local ip="$1"
     for interface in `get_interfaces`; do
         if get_interface_ipaddresses $interface | grep -q $ip; then
@@ -116,6 +142,7 @@ get_interface_by_ip()
             break
         fi
     done
+    $oxtrace
 }
 
 # vim: ts=4 sw=4 et tw=79
