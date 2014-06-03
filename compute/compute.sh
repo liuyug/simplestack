@@ -97,7 +97,7 @@ service nova-conductor restart
 service nova-novncproxy restart
 
 # check nova
-nova image-list
+# nova image-list
 
 # check directory permission
 ls -l /var/lib/nova

@@ -35,4 +35,6 @@ ini_set $db_conf_file "mysqld" "character-set-server" "utf8"
 
 # mysql_secure_installation
 
+service mysql restart
+
 # vim: ts=4 sw=4 et tw=79

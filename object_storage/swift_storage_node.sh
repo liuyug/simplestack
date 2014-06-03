@@ -25,17 +25,20 @@ apt-get install swift swift-account swift-container swift-object xfsprogs -y
 
 # use file instead device
 SWIFT_DISK_FILE="swift_disk_file"
-truncate -s 1GB $cur_dir/$SWIFT_DISK_FILE
-SWIFT_DEVICE=`losetup --show -f $cur_dir/$SWIFT_DISK_FILE`
+if [ ! -f $cur_dir/$SWIFT_DISK_FILE]; then
+    truncate -s 1GB $cur_dir/$SWIFT_DISK_FILE
+fi
+SWIFT_DEVICE=`losetup -a | grep "$cur_dir/$SWIFT_DISK_FILE" | cut -d: -f1`
+if [ "x$SWIFT_DEVICE" = "x" ]; then
+    SWIFT_DEVICE=`losetup --show -f $cur_dir/$SWIFT_DISK_FILE`
+fi
 
-# fdisk /dev/sdb
-# SWIFT_DEVICE=/dev/sdb1
-
-mkfs.xfs $SWIFT_DEVICE
 # echo "$SWIFT_DEVICE /srv/node/p1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 0" >> /etc/fstab
+umount /srv/node/p1
 mkdir -p /srv/node/p1
-mount $SWIFT_DEVICE /srv/node/p1
 chown -R swift:swift /srv/node
+mkfs.xfs $SWIFT_DEVICE
+mount $SWIFT_DEVICE /srv/node/p1
 
 
 cat > /etc/rsyncd.conf << EOF
@@ -69,9 +72,6 @@ EOF
 ini_set "/etc/default/rsync" "#" "RSYNC_ENABLE" "true"
 
 service rsync start
-
-mkdir -p /var/swift/recon
-chown -R swift:swift /var/swift/recon
 
 # start service after get all ring file.
 # for service in \

@@ -1,8 +1,14 @@
 #!/bin/sh
 
 cur_dir=`dirname  $(readlink -fn $0)`
-
 . $cur_dir/../admin-openrc.sh
+
+echo -n "Wait glance service ready"
+while ! glance image-list >/dev/null 2>&1; do
+    echo -n "."
+    sleep 1s
+done
+echo ""
 
 # upload local file
 # "file image_file" to check file format

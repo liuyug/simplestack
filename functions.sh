@@ -4,7 +4,7 @@ set -o xtrace
 
 gen_pass()
 {
-    local oxtrace=`set +o | grep xtrace`
+    local oxtrace="`set +o | grep xtrace`"
     set +o xtrace
     local length=10
     if [ "x"$1 != "x" ]; then
@@ -21,7 +21,7 @@ gen_pass()
 
 ini_hasoption()
 {
-    local oxtrace=`set +o | grep xtrace`
+    local oxtrace="`set +o | grep xtrace`"
     set +o xtrace
     local file="$1"
     local section="$2"
@@ -31,13 +31,13 @@ ini_hasoption()
     else
         line=`sed -n -e "/^\[$section\]/,/^\[.*\]/{/^$option[ \t]*=/p}" "$file"`
     fi
-    [ -n "$line" ]
     $oxtrace
+    [ -n "$line" ]
 }
 
 ini_set()
 {
-    local oxtrace=`set +o | grep xtrace`
+    local oxtrace="`set +o | grep xtrace`"
     set +o xtrace
     local file="$1"
     local section="$2"
@@ -75,7 +75,7 @@ $option=$value
 
 ini_get()
 {
-    local oxtrace=`set +o | grep xtrace`
+    local oxtrace="`set +o | grep xtrace`"
     set +o xtrace
     local file="$1"
     local section="$2"
@@ -92,7 +92,7 @@ ini_get()
 
 ini_comment()
 {
-    local oxtrace=`set +o | grep xtrace`
+    local oxtrace="`set +o | grep xtrace`"
     set +o xtrace
     local file="$1"
     local section="$2"
@@ -107,7 +107,7 @@ ini_comment()
 
 get_interfaces()
 {
-    local oxtrace=`set +o | grep xtrace`
+    local oxtrace="`set +o | grep xtrace`"
     set +o xtrace
     ip link show | sed 's/:/ /2' | awk '/^[0-9]/{print $2}'
     $oxtrace
@@ -115,7 +115,7 @@ get_interfaces()
 
 get_interface_ipaddresses()
 {
-    local oxtrace=`set +o | grep xtrace`
+    local oxtrace="`set +o | grep xtrace`"
     set +o xtrace
     local interface="$1"
     ip addr show dev $interface | sed 's~/~ ~' | awk '/ inet /{print $2}'
@@ -124,7 +124,7 @@ get_interface_ipaddresses()
 
 get_ip_by_hostname()
 {
-    local oxtrace=`set +o | grep xtrace`
+    local oxtrace="`set +o | grep xtrace`"
     set +o xtrace
     local hostname="$1"
     resolveip -s $hostname
@@ -133,7 +133,7 @@ get_ip_by_hostname()
 
 get_interface_by_ip()
 {
-    local oxtrace=`set +o | grep xtrace`
+    local oxtrace="`set +o | grep xtrace`"
     set +o xtrace
     local ip="$1"
     for interface in `get_interfaces`; do

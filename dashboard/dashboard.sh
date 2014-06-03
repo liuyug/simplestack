@@ -12,9 +12,9 @@ DASHBOARD_SERVER=`hostname -s`
 
 ini_set $stack_conf "dashboard" "host" $DASHBOARD_SERVER
 
-apt-get install apache2 memcached libapache2-mod-wsgi openstack-dashboard
+apt-get install apache2 memcached libapache2-mod-wsgi openstack-dashboard -y
 # old and invalid dashboard theme
-apt-get remove --purge openstack-dashboard-ubuntu-theme
+apt-get remove --purge openstack-dashboard-ubuntu-theme -y
 
 
 conf_file="/etc/openstack-dashboard/local_settings.py"

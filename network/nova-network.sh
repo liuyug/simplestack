@@ -41,13 +41,22 @@ service nova-conductor restart
 
 service nova-network restart
 
-export OS_SERVICE_TOKEN=$KEYSTONE_TOKEN
-export OS_SERVICE_ENDPOINT=$KEYSTONE_ENDPOINT
+. $cur_dir/../admin-openrc.sh
+
+echo -n "Wait nova service ready"
+while ! nova net-list >/dev/null 2>&1; do
+    echo -n "."
+    sleep 1s
+done
+echo ""
 
 # add demo-net network
 NETWORK_CIDR="10.0.1.0/24"
 
-nova net-delete $(nova net-list | awk '/ demo-net / { printf $2}')
+net_id=`nova net-list | awk '/ demo-net / { printf $2}'`
+if [ ! "x$net_id" = "x" ]; then
+    nova net-delete $net_id
+fi
 # nova only identify "public" and "private"
 nova network-create private --bridge br100 --multi-host T \
     --fixed-range-v4 "$NETWORK_CIDR"
@@ -60,7 +69,7 @@ nova  secgroup-add-rule default tcp 22 22 0.0.0.0/0
 # iptables -t nat -A POSTROUTING -o br100 -j MASQUERADE
 
 # check
-nova net-list
-nova secgroup-list
+# nova net-list
+# nova secgroup-list
 
 # vim: ts=4 sw=4 et tw=79

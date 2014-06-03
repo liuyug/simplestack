@@ -51,9 +51,9 @@ service cinder-volume restart
 service tgt restart
 
 # check
-. $cur_dir/../demo-openrc.sh
-cinder create --display-name testVolume 1
-cinder list
-cinder delete testVolume
+# . $cur_dir/../demo-openrc.sh
+# cinder create --display-name testVolume 1
+# cinder list
+# cinder delete testVolume
 
 # vim: ts=4 sw=4 et tw=79

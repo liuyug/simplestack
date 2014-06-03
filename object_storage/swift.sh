@@ -45,16 +45,20 @@ keystone endpoint-create \
     --internalurl=http://$SWIFT_SERVER:8080/v1/AUTH_%\(tenant_id\)s \
     --adminurl=http://$SWIFT_SERVER:8080
 
+# in all node
 mkdir -p /etc/swift
-
-# conf_file="/etc/memcached.conf"
-# ini_set $conf_file "#" "-l" "$PROXY_LOCAL_NET_IP"
-# service memcached restart
-
 cat > /etc/swift/swift.conf <<EOF
 [swift-hash]
 swift_hash_path_suffix = $SWIFT_HASH
 EOF
+
+# in proxy node
+# conf_file="/etc/memcached.conf"
+# ini_set $conf_file "#" "-l" "$PROXY_LOCAL_NET_IP"
+service memcached restart
+
+# mkdir -p /var/cache/swift/keystone-signing
+# chown -R swift:swift /var/cache/swift/keystone-signing
 
 cat > /etc/swift/proxy-server.conf <<EOF
 [DEFAULT]
@@ -79,7 +83,7 @@ paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
 # usage for anonymous referrers ('.r:*').
 delay_auth_decision = true
 # cache directory for signing certificate
-signing_dir = /home/swift/keystone-signing
+signing_dir = /var/cache/swift/keystone-signing
 # auth_* settings refer to the Keystone server
 auth_protocol = http
 auth_host = $KEYSTONE_SERVER
