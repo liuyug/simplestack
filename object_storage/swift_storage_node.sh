@@ -25,7 +25,7 @@ apt-get install swift swift-account swift-container swift-object xfsprogs -y
 
 # use file instead device
 SWIFT_DISK_FILE="swift_disk_file"
-if [ ! -f $cur_dir/$SWIFT_DISK_FILE]; then
+if [ ! -f $cur_dir/$SWIFT_DISK_FILE ]; then
     truncate -s 1GB $cur_dir/$SWIFT_DISK_FILE
 fi
 SWIFT_DEVICE=`losetup -a | grep "$cur_dir/$SWIFT_DISK_FILE" | cut -d: -f1`

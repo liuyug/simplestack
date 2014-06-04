@@ -95,7 +95,7 @@ admin_password = $SWIFT_PASS
 
 [filter:cache]
 use = egg:swift#memcache
-memcache_servers = $PROXY_LOCAL_NET_IP:11211,$PROXY_LOCAL_NET_IP:11211
+memcache_servers = 127.0.0.1:11211
 
 [filter:catch_errors]
 use = egg:swift#catch_errors
@@ -113,11 +113,11 @@ DEVICE=p1
 ZONE=1
 STORAGE_REPLICATION_NET_IP=""
 # swift-ring-builder account.builder add # z$ZONE-$STORAGE_LOCAL_NET_IP:6002[R$STORAGE_REPLICATION_NET_IP:6005]/$DEVICE 100
-# swift-ring-builder container.builder add # z$ZONE-$STORAGE_LOCAL_NET_IP_1:6001[R$STORAGE_REPLICATION_NET_IP:6004]/$DEVICE 100
-# swift-ring-builder object.builder add # z#ZONE-$STORAGE_LOCAL_NET_IP_1:6000[R$STORAGE_REPLICATION_NET_IP:6003]/$DEVICE 100
+# swift-ring-builder container.builder add # z$ZONE-$STORAGE_LOCAL_NET_IP:6001[R$STORAGE_REPLICATION_NET_IP:6004]/$DEVICE 100
+# swift-ring-builder object.builder add # z#ZONE-$STORAGE_LOCAL_NET_IP:6000[R$STORAGE_REPLICATION_NET_IP:6003]/$DEVICE 100
 swift-ring-builder account.builder add z$ZONE-$STORAGE_LOCAL_NET_IP:6002/$DEVICE 100
-swift-ring-builder container.builder add z$ZONE-$STORAGE_LOCAL_NET_IP_1:6001/$DEVICE 100
-swift-ring-builder object.builder add z$ZONE-$STORAGE_LOCAL_NET_IP_1:6000/$DEVICE 100
+swift-ring-builder container.builder add z$ZONE-$STORAGE_LOCAL_NET_IP:6001/$DEVICE 100
+swift-ring-builder object.builder add z$ZONE-$STORAGE_LOCAL_NET_IP:6000/$DEVICE 100
 
 
 # verify

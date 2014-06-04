@@ -11,6 +11,7 @@ KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 DASHBOARD_SERVER=`hostname -s`
 
 ini_set $stack_conf "dashboard" "host" $DASHBOARD_SERVER
+ini_set $stack_conf "dashboard" "website" "http://$KEYSTONE_SERVER/horizon"
 
 apt-get install apache2 memcached libapache2-mod-wsgi openstack-dashboard -y
 # old and invalid dashboard theme

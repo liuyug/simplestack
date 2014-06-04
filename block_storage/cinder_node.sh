@@ -12,8 +12,7 @@ CINDER_USER=`ini_get $stack_conf "cinder" "username"`
 CINDER_PASS=`ini_get $stack_conf "cinder" "password"`
 CINDER_DBUSER=`ini_get $stack_conf "cinder" "db_username"`
 CINDER_DBPASS=`ini_get $stack_conf "cinder" "db_password"`
-CINDER_VOLUMES="cinder-volumes"
-ini_set $stack_file "cinder" "cinder_volumes" "$CINDER_VOLUMES"
+CINDER_VOLUMES=`ini_get $stack_conf "cinder" "cinder-volumes"`
 
 KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
 KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`

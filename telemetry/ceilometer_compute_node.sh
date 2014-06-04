@@ -7,7 +7,7 @@ stack_conf=$cur_dir/../stack.conf
 
 
 CEILOMETER_USER=`ini_get $stack_conf "ceilometer" "username"`
-CEILOMETER_PASS=`ini_get $stack_conf "ceilometer" "username"`
+CEILOMETER_PASS=`ini_get $stack_conf "ceilometer" "password"`
 CEILOMETER_TOKEN=`ini_get $stack_conf "ceilometer" "token"`
 
 KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`

@@ -23,3 +23,28 @@ username: ubuntu
 
 password: no, use rsa key
 
+Install
+-------
+All install on single machine::
+
+    allinone.sh 2>&1 | tee out.log
+
+all username and password are stored in file, "stack.conf".
+
+make user "rc" file::
+
+    mkrc.sh <KEYSTONE SERVER> <USER> <PASSWORD> <TENANT>
+
+How to use
+-----------
+::
+
+    . admin-openrc.sh
+    keystone user-list
+    glance image-list
+    nova image-list
+
+Bug
+----
+"trove" could not been installed for ubuntu package bug.
+

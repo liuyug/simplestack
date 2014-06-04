@@ -36,9 +36,16 @@ apt-get install ceilometer-api ceilometer-collector ceilometer-agent-central \
 apt-get install mongodb-server -y
 
 conf_file="/etc/mongodb.conf"
-ini_set $conf_file "#" "bind_ip" "$KEYSTONE_SERVER"
+ini_set $conf_file "#" "bind_ip" "$CEILOMETER_SERVER"
 
 service mongodb restart
+
+echo -n "Wait mongodb ready"
+while ! mongo --host $CEILOMETER_SERVER --eval "help" > /dev/null 2>&1; do
+    echo -n "."
+    sleep 1s
+done
+echo ""
 
 mongo --host $CEILOMETER_SERVER --eval "
 db = db.getSiblingDB(\"ceilometer\");

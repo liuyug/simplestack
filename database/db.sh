@@ -12,11 +12,7 @@ DB_ROOT_PASS=`gen_pass`
 ini_set $stack_conf "database" "username" "root"
 ini_set $stack_conf "database" "password" $DB_ROOT_PASS
 
-if [ "x"$1 = "x" ];then
-    DB_SERVER="127.0.0.1"
-else
-    DB_SERVER=$1
-fi
+DB_SERVER=`hostname -s`
 ini_set $stack_conf "database" "host" $DB_SERVER
 
 apt-get remove --purge mysql-server mysql-common -y
@@ -27,7 +23,7 @@ echo "mysql-server-5.5 mysql-server/root_password_again password $DB_ROOT_PASS" 
 apt-get install mysql-server mysql-common -y
 
 db_conf_file="/etc/mysql/my.cnf"
-ini_set $db_conf_file "mysqld" "bind-address" $DB_SERVER
+ini_set $db_conf_file "mysqld" "bind-address" `get_ip_by_hostname $DB_SERVER`
 ini_set $db_conf_file "mysqld" "default-storage-engine" "innodb"
 ini_set $db_conf_file "mysqld" "collation-server" "utf8_general_ci"
 ini_set $db_conf_file "mysqld" "init-connect" "\"SET NAMES utf8\""
