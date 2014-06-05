@@ -12,6 +12,7 @@ KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
 # generate parameter
 INTERFACE_NAME="eth0"
 BRIDGE_NAME="br100"
+NETWORK_SERVER=`hostname -s`
 
 ini_set $stack_conf "nova-network" "interface_name" "$INTERFACE_NAME"
 ini_set $stack_conf "nova-network" "bridge_name" "$BRIDGE_NAME"
@@ -34,6 +35,16 @@ ini_set $conf_file "DEFAULT" "force_dhcp_release" "True"
 ini_set $conf_file "DEFAULT" "flat_network_bridge" "$BRIDGE_NAME"
 ini_set $conf_file "DEFAULT" "flat_interface" "$INTERFACE_NAME"
 ini_set $conf_file "DEFAULT" "public_interface" "$INTERFACE_NAME"
+# don't use 127.x.x.x
+ini_set $conf_file "DEFAULT" "metadata-host" "$(get_ip_by_hostname $NETWORK_SERVER)"
+
+# permit ip forward
+conf_file="/etc/sysctl.conf"
+ini_set $conf_file "#" "net.ipv4.ip_forward" "1"
+ini_set $conf_file "#" "net.ipv4.conf.all.rp_filter" "0"
+ini_set $conf_file "#" "net.ipv4.conf.default.rp_filter" "0"
+sysctl -p
+
 
 service nova-api restart
 service nova-scheduler restart
@@ -67,6 +78,7 @@ nova secgroup-add-rule default icmp -1 -1 0.0.0.0/0
 nova  secgroup-add-rule default tcp 22 22 0.0.0.0/0
 # permit vm access external network
 # iptables -t nat -A POSTROUTING -o br100 -j MASQUERADE
+iptables -t nat -I POSTROUTING 1 -s 10.0.1.0/24 -o br100 -j MASQUERADE
 
 # check
 # nova net-list

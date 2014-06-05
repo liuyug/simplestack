@@ -8,9 +8,7 @@ stack_conf=$cur_dir/../stack.conf
 # generate parameter
 INTERFACE_NAME=`ini_get $stack_conf "nova-network" "interface_name"`
 BRIDGE_NAME=`ini_get $stack_conf "nova-network" "bridge_name"`
-
-# external parameter
-KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
+NETWORK_SERVER=`hostname -s`
 
 apt-get install nova-network -y
 # only for multi-host
@@ -32,7 +30,14 @@ ini_set $conf_file "DEFAULT" "force_dhcp_release" "True"
 ini_set $conf_file "DEFAULT" "flat_network_bridge" "$BRIDGE_NAME"
 ini_set $conf_file "DEFAULT" "flat_interface" "$INTERFACE_NAME"
 ini_set $conf_file "DEFAULT" "public_interface" "$INTERFACE_NAME"
-ini_set $conf_file "DEFAULT" "metadata-host" "$(get_ip_by_hostname $KEYSTONE_SERVER)"
+ini_set $conf_file "DEFAULT" "metadata-host" "$(get_ip_by_hostname $NETWORK_SERVER)"
+
+conf_file="/etc/sysctl.conf"
+ini_set $conf_file "#" "net.ipv4.ip_forward" "1"
+ini_set $conf_file "#" "net.ipv4.conf.all.rp_filter" "0"
+ini_set $conf_file "#" "net.ipv4.conf.default.rp_filter" "0"
+sysctl -p
+
 
 service nova-network restart
 service nova-api-metadata restart

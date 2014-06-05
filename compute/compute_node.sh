@@ -65,10 +65,13 @@ ini_set $conf_file "keystone_authtoken" "admin_user" "$NOVA_USER"
 ini_set $conf_file "keystone_authtoken" "admin_password" "$NOVA_PASS"
 ini_set $conf_file "DEFAULT" "my_ip" "$(resolveip -s $NOVA_COMPUTE_SERVER)"
 ini_set $conf_file "DEFAULT" "vnc_enabled" "True"
-ini_set $conf_file "DEFAULT" "vncserver_listen" "0.0.0.0"
+ini_set $conf_file "DEFAULT" "vncserver_listen" "$NOVA_SERVER"
 ini_set $conf_file "DEFAULT" "vncserver_proxyclient_address" "$NOVA_COMPUTE_SERVER"
 ini_set $conf_file "DEFAULT" "novncproxy_base_url" "http://$NOVA_SERVER:6080/vnc_auto.html"
 ini_set $conf_file "DEFAULT" "glance_host" "$GLANCE_SERVER"
+
+conf_file="/etc/nova/nova-compute.conf"
+ini_set $conf_file "libvirt" "virt_type" "qemu"
 
 ret=`egrep -c '(vmx|svm)' /proc/cpuinfo`
 if [ $ret -gt 0 ]; then
