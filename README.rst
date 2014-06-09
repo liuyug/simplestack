@@ -25,6 +25,18 @@ password: no, use rsa key
 
 Install
 -------
+
+.. note::
+
+   add fixed ip address into ``/etc/hosts``, such as::
+
+       192.168.203.10 node1
+
+    ``hostname -s`` will be "node1"
+
+All in one
+~~~~~~~~~~~
+
 All install on single machine::
 
     allinone.sh 2>&1 | tee out.log
@@ -35,6 +47,11 @@ make user "rc" file::
 
     mkrc.sh <KEYSTONE SERVER> <USER> <PASSWORD> <TENANT>
 
+Step by step
+~~~~~~~~~~~~
+ubuntu_rep.sh
+ntp/ntp.sh
+
 How to use
 -----------
 ::
@@ -43,6 +60,10 @@ How to use
     keystone user-list
     glance image-list
     nova image-list
+
+.. note::
+
+   You will lose the volume of block stoarge and the disk of object storage after machine reboot. Run remount_vg.sh and remount_disk.sh to refind them.
 
 Bug
 ----

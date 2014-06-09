@@ -11,8 +11,6 @@ SWIFT_USER="swift"
 SWIFT_PASS=`gen_pass`
 SWIFT_SERVER=`hostname -s`
 SWIFT_HASH=`gen_pass`
-PROXY_LOCAL_NET_IP=`get_ip_by_hostname $SWIFT_SERVER`
-STORAGE_LOCAL_NET_IP=`get_ip_by_hostname $SWIFT_SERVER`
 
 # external parameter
 KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
@@ -54,7 +52,7 @@ EOF
 
 # in proxy node
 # conf_file="/etc/memcached.conf"
-# ini_set $conf_file "#" "-l" "$PROXY_LOCAL_NET_IP"
+# ini_set $conf_file "#" "-l" "$SWIFT_SERVER"
 service memcached restart
 
 # mkdir -p /var/cache/swift/keystone-signing
@@ -87,6 +85,7 @@ signing_dir = /var/cache/swift/keystone-signing
 # auth_* settings refer to the Keystone server
 auth_protocol = http
 auth_host = $KEYSTONE_SERVER
+auth_uri = http://$KEYSTONE_SERVER:5000
 auth_port = 35357
 # the service tenant and swift username and password created in Keystone
 admin_tenant_name = service
@@ -95,7 +94,7 @@ admin_password = $SWIFT_PASS
 
 [filter:cache]
 use = egg:swift#memcache
-memcache_servers = 127.0.0.1:11211
+memcache_servers = $SWIFT_SERVER:11211
 
 [filter:catch_errors]
 use = egg:swift#catch_errors
@@ -105,41 +104,11 @@ use = egg:swift#healthcheck
 EOF
 
 cd /etc/swift
+rm -rf account.builder container.builder object.builder
+
 swift-ring-builder account.builder create 18 3 1
 swift-ring-builder container.builder create 18 3 1
 swift-ring-builder object.builder create 18 3 1
-
-DEVICE=p1
-ZONE=1
-STORAGE_REPLICATION_NET_IP=""
-# swift-ring-builder account.builder add # z$ZONE-$STORAGE_LOCAL_NET_IP:6002[R$STORAGE_REPLICATION_NET_IP:6005]/$DEVICE 100
-# swift-ring-builder container.builder add # z$ZONE-$STORAGE_LOCAL_NET_IP:6001[R$STORAGE_REPLICATION_NET_IP:6004]/$DEVICE 100
-# swift-ring-builder object.builder add # z#ZONE-$STORAGE_LOCAL_NET_IP:6000[R$STORAGE_REPLICATION_NET_IP:6003]/$DEVICE 100
-swift-ring-builder account.builder add z$ZONE-$STORAGE_LOCAL_NET_IP:6002/$DEVICE 100
-swift-ring-builder container.builder add z$ZONE-$STORAGE_LOCAL_NET_IP:6001/$DEVICE 100
-swift-ring-builder object.builder add z$ZONE-$STORAGE_LOCAL_NET_IP:6000/$DEVICE 100
-
-
-# verify
-swift-ring-builder account.builder
-swift-ring-builder container.builder
-swift-ring-builder object.builder
-
-swift-ring-builder account.builder rebalance
-swift-ring-builder container.builder rebalance
-swift-ring-builder object.builder rebalance
-
-# Copy the account.ring.gz, container.ring.gz, and object.ring.gz files to each
-# of the Proxy and Storage nodes in /etc/swift.
-
-chown -R swift:swift /etc/swift
-service swift-proxy restart
-
-
-# swift stat
-# swift upload myfiles test.txt
-# swift upload myfiles test2.txt
-# swift download myfiles
 
 
 # vim: ts=4 sw=4 et tw=79

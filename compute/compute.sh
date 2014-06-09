@@ -12,6 +12,7 @@ NOVA_DBPASS=`gen_pass`
 NOVA_USER="nova"
 NOVA_PASS=`gen_pass`
 NOVA_SERVER=`hostname -s`
+NOVA_COMPUTE_SERVER=$NOVA_SERVER
 
 # external parameter
 DB_SERVER=`ini_get $stack_conf "database" "host"`
@@ -30,6 +31,7 @@ ini_set $stack_conf "nova" "db_password" $NOVA_DBPASS
 ini_set $stack_conf "nova" "host" $NOVA_SERVER
 ini_set $stack_conf "nova" "username" $NOVA_USER
 ini_set $stack_conf "nova" "password" $NOVA_PASS
+ini_set $stack_conf "nova" "host_compute" $NOVA_COMPUTE_SERVER
 
 # install db client
 apt-get install python-mysqldb -y
@@ -52,9 +54,13 @@ ini_set $conf_file "keystone_authtoken" "auth_protocol" "http"
 ini_set $conf_file "keystone_authtoken" "admin_tenant_name" "service"
 ini_set $conf_file "keystone_authtoken" "admin_user" "$NOVA_USER"
 ini_set $conf_file "keystone_authtoken" "admin_password" "$NOVA_PASS"
-ini_set $conf_file "DEFAULT" "my_ip" "$(resolveip -s $NOVA_SERVER)"
-ini_set $conf_file "DEFAULT" "vncserver_listen" "$NOVA_SERVER"
-ini_set $conf_file "DEFAULT" "vncserver_proxyclient_address" "$NOVA_SERVER"
+ini_set $conf_file "DEFAULT" "my_ip" "$(get_ip_by_hostname $NOVA_COMPUTE_SERVER)"
+# The compute host specifies the address that the proxy should use to connect
+# through the nova.conf file option, vncserver_proxyclient_address. In this
+# way, the VNC proxy works as a bridge between the public network and private
+# host network.
+ini_set $conf_file "DEFAULT" "vncserver_listen" "$NOVA_COMPUTE_SERVER"
+ini_set $conf_file "DEFAULT" "vncserver_proxyclient_address" "$NOVA_COMPUTE_SERVER"
 
 
 rm -rf /var/lib/nova/nova.sqlite

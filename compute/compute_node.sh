@@ -33,7 +33,7 @@ RABBIT_SERVER=`ini_get $stack_conf "rabbit" "host"`
 ini_set $stack_conf "nova" "host_compute" $NOVA_COMPUTE_SERVER
 
 # install db client
-apt-get install python-mysqldb -y
+apt-get install python-mysqldb python-novaclient -y
 apt-get install nova-compute-kvm python-guestfs -y
 
 dpkg-statoverride  --update --add root root 0644 /boot/vmlinuz-$(uname -r)
@@ -63,9 +63,9 @@ ini_set $conf_file "keystone_authtoken" "auth_protocol" "http"
 ini_set $conf_file "keystone_authtoken" "admin_tenant_name" "service"
 ini_set $conf_file "keystone_authtoken" "admin_user" "$NOVA_USER"
 ini_set $conf_file "keystone_authtoken" "admin_password" "$NOVA_PASS"
-ini_set $conf_file "DEFAULT" "my_ip" "$(resolveip -s $NOVA_COMPUTE_SERVER)"
+ini_set $conf_file "DEFAULT" "my_ip" "$(get_ip_by_hostname $NOVA_COMPUTE_SERVER)"
 ini_set $conf_file "DEFAULT" "vnc_enabled" "True"
-ini_set $conf_file "DEFAULT" "vncserver_listen" "$NOVA_SERVER"
+ini_set $conf_file "DEFAULT" "vncserver_listen" "$NOVA_COMPUTE_SERVER"
 ini_set $conf_file "DEFAULT" "vncserver_proxyclient_address" "$NOVA_COMPUTE_SERVER"
 ini_set $conf_file "DEFAULT" "novncproxy_base_url" "http://$NOVA_SERVER:6080/vnc_auto.html"
 ini_set $conf_file "DEFAULT" "glance_host" "$GLANCE_SERVER"

@@ -67,9 +67,43 @@ EOF
         else
             sed -i -e "/^\[$section\]/a \\
 $option=$value
-            " "$file"
+" "$file"
         fi
     fi
+    $oxtrace
+}
+
+ini_set_multiline()
+{
+    local oxtrace="`set +o | grep xtrace`"
+    set +o xtrace
+    local file="$1"
+    local section="$2"
+    local option="$3"
+    local values
+    if [ ! -f "$file" ]; then
+        touch "$file"
+    fi
+    # reverse odrer
+    shift 3
+    for v in $@; do
+        values="$v ${values}"
+    done
+    if ! grep -q "^\[$section\]" "$file"; then
+        # add section
+        # dash don't support "echo -e"
+        printf "\n[$section]\n" >> "$file"
+    fi
+    if ini_hasoption "$file" $section $option; then
+        # remove options
+        sed -i -r "/^\[$section\]/,/^\[.*\]/{~^$option[ \t]*=[ \t]*.*$~d}" "$file"
+    fi
+    # add
+    for value in $values; do
+        sed -i -e "/^\[$section\]/a \\
+$option=$value
+" "$file"
+    done
     $oxtrace
 }
 
@@ -127,7 +161,13 @@ get_ip_by_hostname()
     local oxtrace="`set +o | grep xtrace`"
     set +o xtrace
     local hostname="$1"
-    resolveip -s $hostname
+    ip=`awk "/[ \t]$hostname([ \t]|\\\$)/{print \\\$1}" /etc/hosts | head -n 1`
+    if [ "x$ip" = "x" ]; then
+        echo "Do not find ip address by $hostname."
+        #exit 1
+    else
+        echo $ip
+    fi
     $oxtrace
 }
 

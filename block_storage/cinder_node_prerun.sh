@@ -23,16 +23,16 @@ CINDER_VOLUMES_FILE="cinder_volumes_file"
 ini_set $stack_conf "cinder" "cinder_volumes" "$CINDER_VOLUMES"
 
 if [ ! -f $cur_dir/$CINDER_VOLUMES_FILE ]; then
-    truncate -s 1GB $cur_dir/$CINDER_VOLUMES_FILE
+    truncate -s 10G $cur_dir/$CINDER_VOLUMES_FILE
 fi
 CINDER_DEVICE=`losetup -a | grep "$cur_dir/$CINDER_VOLUMES_FILE" | cut -d: -f1`
 if [ "x$CINDER_DEVICE" = "x" ]; then
     CINDER_DEVICE=`losetup --show -f $cur_dir/$CINDER_VOLUMES_FILE`
 fi
-if ! pvs $CINDER_DEVICE; then
+if ! pvs $CINDER_DEVICE >/dev/null 2>&1; then
     pvcreate $CINDER_DEVICE
 fi
-if ! vgs $CINDER_VOLUMES; then
+if ! vgs $CINDER_VOLUMES >/dev/null 2>&1; then
     vgcreate $CINDER_VOLUMES $CINDER_DEVICE
 fi
 

@@ -24,9 +24,8 @@ conf_file="/etc/nova/nova.conf"
 ini_set $conf_file "DEFAULT" "instance_usage_audit" "True"
 ini_set $conf_file "DEFAULT" "instance_usage_audit_period" "hour"
 ini_set $conf_file "DEFAULT" "notify_on_state_change" "vm_and_task_state"
-ini_set $conf_file "DEFAULT" "notification_driver" \
-    "nova.openstack.common.notifier.rpc_notifier"
-ini_set $conf_file "DEFAULT" "notification_driver" \
+ini_set_multiline $conf_file "DEFAULT" "notification_driver" \
+    "nova.openstack.common.notifier.rpc_notifier" \
     "ceilometer.compute.nova_notifier"
 
 service nova-compute restart

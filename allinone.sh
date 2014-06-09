@@ -308,8 +308,13 @@ block_storage/cinder_node.sh
 #
 # Configurable WSGI middleware that handles authentication. Usually the
 # Identity Service.
+#
+# swift proxy port: 8080
+object_storage/swift_storage_node_prepare.sh
 object_storage/swift.sh
-object_storage/swift_storage_node.sh
+object_storage/swift_add_storage_node.sh
+object_storage/swift_start.sh
+object_storage/swift_storage_node_start.sh
 
 # Orchestration service
 # ---------------------
@@ -379,7 +384,8 @@ orchestration/heat.sh
 telemetry/ceilometer.sh
 telemetry/ceilometer_image_node.sh
 telemetry/ceilometer_compute_node.sh
-telemetry/ceilometer_block_node.sh
+# some bug
+# telemetry/ceilometer_block_node.sh
 telemetry/ceilometer_object_node.sh
 
 # Database service

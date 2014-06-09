@@ -11,9 +11,7 @@ SWIFT_USER=`ini_get $stack_conf "swift" "username"`
 SWIFT_PASS=`ini_get $stack_conf "swift" "password"`
 SWIFT_SERVER=`ini_get $stack_conf "swift" "host"`
 SWIFT_HASH=`ini_get $stack_conf "swift" "hash"`
-PROXY_LOCAL_NET_IP=`get_ip_by_hostname $SWIFT_SERVER`
 STORAGE_LOCAL_NET_IP=`get_ip_by_hostname $(hostname -s)`
-STORAGE_REPLICATION_NET_IP=$STORAGE_LOCAL_NET_IP
 
 # external parameter
 KEYSTONE_TOKEN=`ini_get $stack_conf "keystone" "admin_token"`
@@ -26,7 +24,7 @@ apt-get install swift swift-account swift-container swift-object xfsprogs -y
 # use file instead device
 SWIFT_DISK_FILE="swift_disk_file"
 if [ ! -f $cur_dir/$SWIFT_DISK_FILE ]; then
-    truncate -s 1GB $cur_dir/$SWIFT_DISK_FILE
+    truncate -s 10G $cur_dir/$SWIFT_DISK_FILE
 fi
 SWIFT_DEVICE=`losetup -a | grep "$cur_dir/$SWIFT_DISK_FILE" | cut -d: -f1`
 if [ "x$SWIFT_DEVICE" = "x" ]; then
@@ -36,9 +34,9 @@ fi
 # echo "$SWIFT_DEVICE /srv/node/p1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 0" >> /etc/fstab
 umount /srv/node/p1
 mkdir -p /srv/node/p1
-chown -R swift:swift /srv/node
 mkfs.xfs $SWIFT_DEVICE
 mount $SWIFT_DEVICE /srv/node/p1
+chown swift:swift /srv/node/p1
 
 
 cat > /etc/rsyncd.conf << EOF
@@ -73,6 +71,13 @@ ini_set "/etc/default/rsync" "#" "RSYNC_ENABLE" "true"
 
 service rsync start
 
+# in all node
+mkdir -p /etc/swift
+cat > /etc/swift/swift.conf <<EOF
+[swift-hash]
+swift_hash_path_suffix = $SWIFT_HASH
+EOF
+
 # start service after get all ring file.
 # for service in \
 #     swift-object \
@@ -91,6 +96,6 @@ service rsync start
 #     done
 
 # or
-swift-init all start
+# swift-init all start
 
 # vim: ts=4 sw=4 et tw=79
