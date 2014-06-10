@@ -71,6 +71,9 @@ ini_set "/etc/default/rsync" "#" "RSYNC_ENABLE" "true"
 
 service rsync start
 
+mkdir -p /var/swift/recon
+chown -R swift:swift /var/swift/recon
+
 # in all node
 mkdir -p /etc/swift
 cat > /etc/swift/swift.conf <<EOF
