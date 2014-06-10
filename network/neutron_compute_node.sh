@@ -6,11 +6,6 @@ cur_dir=`dirname  $(readlink -fn $0)`
 stack_conf=$cur_dir/../stack.conf
 
 
-conf_file="/etc/sysctl.conf"
-ini_set $conf_file "#" "net.ipv4.conf.all.rp_filter" "0"
-ini_set $conf_file "#" "net.ipv4.conf.default.rp_filter" "0"
-sysctl -p
-
 NEUTRON_USER=`ini_get $stack_conf "neutron" "username"`
 NEUTRON_PASS=`ini_get $stack_conf "neutron" "password"`
 NEUTRON_SERVER=`ini_get $stack_conf "neutron" "host"`
@@ -88,6 +83,11 @@ ini_set $conf_file "DEFAULT" "security_group_api" "neutron"
 ini_set $conf_file "DEFAULT" "service_neutron_metadata_proxy" "true"
 ini_set $conf_file "DEFAULT" "neutron_metadata_proxy_shared_secret" \
         "$METADATA_SECRET"
+
+conf_file="/etc/sysctl.conf"
+ini_set $conf_file "#" "net.ipv4.conf.all.rp_filter" "0"
+ini_set $conf_file "#" "net.ipv4.conf.default.rp_filter" "0"
+sysctl -p
 
 # To configure the Open vSwitch (OVS) service
 service openvswitch-switch restart

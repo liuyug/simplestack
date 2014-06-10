@@ -6,7 +6,8 @@ cur_dir=`dirname  $(readlink -fn $0)`
 stack_conf=$cur_dir/../stack.conf
 
 # generate parameter
-INTERFACE_NAME=`ini_get $stack_conf "nova-network" "interface_name"`
+PUBLIC_INTERFACE_NAME=`ini_get $stack_conf "nova-network" "public_interface_name"`
+PRIVATE_INTERFACE_NAME=`ini_get $stack_conf "nova-network" "private_interface_name"`
 BRIDGE_NAME=`ini_get $stack_conf "nova-network" "bridge_name"`
 NETWORK_SERVER=`hostname -s`
 
@@ -28,8 +29,8 @@ ini_set $conf_file "DEFAULT" "send_arp_for_ha" "True"
 ini_set $conf_file "DEFAULT" "share_dhcp_address" "True"
 ini_set $conf_file "DEFAULT" "force_dhcp_release" "True"
 ini_set $conf_file "DEFAULT" "flat_network_bridge" "$BRIDGE_NAME"
-ini_set $conf_file "DEFAULT" "flat_interface" "$INTERFACE_NAME"
-ini_set $conf_file "DEFAULT" "public_interface" "$INTERFACE_NAME"
+ini_set $conf_file "DEFAULT" "flat_interface" "$PRIVATE_INTERFACE_NAME"
+ini_set $conf_file "DEFAULT" "public_interface" "$PUBLIC_INTERFACE_NAME"
 ini_set $conf_file "DEFAULT" "metadata-host" "$(get_ip_by_hostname $NETWORK_SERVER)"
 
 conf_file="/etc/sysctl.conf"

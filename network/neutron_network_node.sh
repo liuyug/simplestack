@@ -6,12 +6,6 @@ cur_dir=`dirname  $(readlink -fn $0)`
 stack_conf=$cur_dir/../stack.conf
 
 
-conf_file="/etc/sysctl.conf"
-ini_set $conf_file "#" "net.ipv4.ip_forward" "1"
-ini_set $conf_file "#" "net.ipv4.conf.all.rp_filter" "0"
-ini_set $conf_file "#" "net.ipv4.conf.default.rp_filter" "0"
-sysctl -p
-
 apt-get install neutron-plugin-ml2 neutron-plugin-openvswitch-agent \
     neutron-l3-agent neutron-dhcp-agent -y
 major=$(uname -r | cut -d"." -f 1)
@@ -100,6 +94,12 @@ ini_set $conf_file "ovs" "enable_tunneling" "True"
 ini_set $conf_file "securitygroup" "firewall_driver" \
     "neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver"
 ini_set $conf_file "securitygroup" "enable_security_group" "True"
+
+conf_file="/etc/sysctl.conf"
+ini_set $conf_file "#" "net.ipv4.ip_forward" "1"
+ini_set $conf_file "#" "net.ipv4.conf.all.rp_filter" "0"
+ini_set $conf_file "#" "net.ipv4.conf.default.rp_filter" "0"
+sysctl -p
 
 # To configure the Open vSwitch (OVS) service
 service openvswitch-switch restart

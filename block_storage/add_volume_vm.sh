@@ -11,7 +11,7 @@ SIZE=$3
 cinder create --display-name $VOLUME $SIZE
 
 echo -n "Wait volume \"$VOLUME\" ready"
-while ! cinder show $VOLUME; do
+while ! cinder show $VOLUME >/dev/null 2>&1; do
     echo -n "."
 done
 echo ""

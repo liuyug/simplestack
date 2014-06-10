@@ -10,11 +10,19 @@ KEYSTONE_SERVER=`ini_get $stack_conf "keystone" "host"`
 KEYSTONE_ENDPOINT=`ini_get $stack_conf "keystone" "endpoint"`
 
 # generate parameter
-INTERFACE_NAME="eth0"
+PRIVATE_INTERFACE_NAME="eth0"
+# for single network interface card
+PUBLIC_INTERFACE_NAME="br100"
 BRIDGE_NAME="br100"
 NETWORK_SERVER=`hostname -s`
 
-ini_set $stack_conf "nova-network" "interface_name" "$INTERFACE_NAME"
+# for private interface use promiscuous mode to recived all packets
+# iface $private_interface inet manual
+# up ifconfig $IFACE 0.0.0.0 up
+# up ifconfig $IFACE promisc
+
+ini_set $stack_conf "nova-network" "public_interface_name" "$PUBLIC_INTERFACE_NAME"
+ini_set $stack_conf "nova-network" "private_interface_name" "$PRIVATE_INTERFACE_NAME"
 ini_set $stack_conf "nova-network" "bridge_name" "$BRIDGE_NAME"
 
 apt-get install nova-network -y
@@ -32,9 +40,12 @@ ini_set $conf_file "DEFAULT" "multi_host" "True"
 ini_set $conf_file "DEFAULT" "send_arp_for_ha" "True"
 ini_set $conf_file "DEFAULT" "share_dhcp_address" "True"
 ini_set $conf_file "DEFAULT" "force_dhcp_release" "True"
+# will add flat_interface and VM interface
 ini_set $conf_file "DEFAULT" "flat_network_bridge" "$BRIDGE_NAME"
-ini_set $conf_file "DEFAULT" "flat_interface" "$INTERFACE_NAME"
-ini_set $conf_file "DEFAULT" "public_interface" "$INTERFACE_NAME"
+# internal interface, private network
+ini_set $conf_file "DEFAULT" "flat_interface" "$PRIVATE_INTERFACE_NAME"
+# public interface for internet.
+ini_set $conf_file "DEFAULT" "public_interface" "$PUBLIC_INTERFACE_NAME"
 ini_set $conf_file "DEFAULT" "metadata-host" "$(get_ip_by_hostname $NETWORK_SERVER)"
 
 # permit ip forward

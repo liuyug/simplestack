@@ -114,7 +114,11 @@ ini_set $conf_file "securitygroup" "firewall_driver" \
     "neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver"
 ini_set $conf_file "securitygroup" "enable_security_group" "True"
 
-# networking service
+
+service nova-api restart
+service nova-scheduler restart
+service nova-conductor restart
+
 service neutron-server restart
 
 # vim: ts=4 sw=4 et tw=79

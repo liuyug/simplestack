@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -o xtrace
+
 cur_dir=`dirname  $(readlink -fn $0)`
 
 . $cur_dir/../admin-openrc.sh
@@ -37,6 +39,7 @@ neutron router-delete demo-router
 neutron router-create demo-router
 neutron router-interface-add demo-router demo-subnet
 neutron router-gateway-set demo-router ext-net
+
 # verify network
 # ping gateway
 
