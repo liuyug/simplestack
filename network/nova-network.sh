@@ -74,12 +74,12 @@ echo ""
 # add demo-net network
 NETWORK_CIDR="10.0.1.0/24"
 
-net_id=`nova net-list | awk '/ demo-net / { printf $2}'`
+net_id=`nova net-list | awk '/ private / { printf $2}'`
 if [ ! "x$net_id" = "x" ]; then
     nova net-delete $net_id
 fi
 # nova only identify "public" and "private"
-nova network-create private --bridge br100 --multi-host T \
+nova network-create private --bridge $BRIDGE_NAME --multi-host T \
     --fixed-range-v4 "$NETWORK_CIDR"
 
 # permit icmp

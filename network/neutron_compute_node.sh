@@ -51,13 +51,13 @@ ini_comment $conf_file "service_providers" ".*"
 
 # To configure the Modular Layer 2 (ML2) plug-in
 conf_file="/etc/neutron/plugins/ml2/ml2_conf.ini"
-ini_set $conf_file "ml2" "type_drivers" "gre"
-ini_set $conf_file "ml2" "tenant_network_types" "gre"
+ini_set $conf_file "ml2" "type_drivers" "local"
+ini_set $conf_file "ml2" "tenant_network_types" "local"
 ini_set $conf_file "ml2" "mechanism_drivers" "openvswitch"
 ini_set $conf_file "ml2_type_gre" "tunnel_id_ranges" "1:1000"
-ini_set $conf_file "ovs" "local_ip" "$NOVA_COMPUTE_SERVER"
+ini_set $conf_file "ovs" "local_ip" "$(get_ip_by_hostname $NOVA_COMPUTE_SERVER)"
 ini_set $conf_file "ovs" "tunnel_type" "gre"
-ini_set $conf_file "ovs" "enable_tunneling" "True"
+ini_set $conf_file "ovs" "enable_tunneling" "False"
 ini_set $conf_file "securitygroup" "firewall_driver" \
     "neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver"
 ini_set $conf_file "securitygroup" "enable_security_group" "True"

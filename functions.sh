@@ -147,12 +147,13 @@ get_interfaces()
     $oxtrace
 }
 
-get_interface_ipaddresses()
+get_ips_by_interface()
 {
     local oxtrace="`set +o | grep xtrace`"
     set +o xtrace
     local interface="$1"
-    ip addr show dev $interface | sed 's~/~ ~' | awk '/ inet /{print $2}'
+    # 192.168.0.1/24
+    ip addr show dev $interface | awk '/ inet /{print $2}'
     $oxtrace
 }
 
@@ -177,7 +178,7 @@ get_interface_by_ip()
     set +o xtrace
     local ip="$1"
     for interface in `get_interfaces`; do
-        if get_interface_ipaddresses $interface | grep -q $ip; then
+        if get_ips_by_interface $interface | grep -q $ip; then
             echo $interface
             break
         fi

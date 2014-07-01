@@ -11,7 +11,7 @@ apt-get install software-properties-common -y
 apt-get install python-software-properties -y
 
 # my customized application
-apt-get install vim curl lynx tcpdump htop -y
+apt-get install vim curl lynx tcpdump htop ethtool -y
 
 
 # vim: ts=4 sw=4 et tw=79

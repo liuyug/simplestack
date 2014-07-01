@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# for controller node
+
 cur_dir=`dirname  $(readlink -fn $0)`
 
 . $cur_dir/../functions.sh
@@ -106,8 +108,8 @@ ini_comment $conf_file "service_providers" ".*"
 # not need the OVS agent or service because it does not handle instance network
 # traffic
 conf_file="/etc/neutron/plugins/ml2/ml2_conf.ini"
-ini_set $conf_file "ml2" "type_drivers" "gre"
-ini_set $conf_file "ml2" "tenant_network_types" "gre"
+ini_set $conf_file "ml2" "type_drivers" "local"
+ini_set $conf_file "ml2" "tenant_network_types" "local"
 ini_set $conf_file "ml2" "mechanism_drivers" "openvswitch"
 ini_set $conf_file "ml2_type_gre" "tunnel_id_ranges" "1:1000"
 ini_set $conf_file "securitygroup" "firewall_driver" \
