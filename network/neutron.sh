@@ -40,6 +40,14 @@ ini_set $stack_conf "neutron" "host" $NEUTRON_SERVER
 ini_set $stack_conf "neutron" "username" $NEUTRON_USER
 ini_set $stack_conf "neutron" "password" $NEUTRON_PASS
 ini_set $stack_conf "neutron" "metadata_secret" $METADATA_SECRET
+# external network - 192.168.1.0/24
+ini_set $stack_conf "neutron" "floating_ip_start" "192.168.1.2"
+ini_set $stack_conf "neutron" "floating_ip_end" "192.168.1.254"
+ini_set $stack_conf "neutron" "external_network_gateway" "192.168.1.1"
+ini_set $stack_conf "neutron" "external_network_cidr" "192.168.1.0/24"
+# tenant network - 10.0.1.0/24
+ini_set $stack_conf "neutron" "tenant_network_gateway" "10.0.1.1"
+ini_set $stack_conf "neutron" "tenant_network_cidr" "10.0.1.0/28"
 
 # create neutron database
 mysql -u root -p$DB_ROOT_PASS <<EOF

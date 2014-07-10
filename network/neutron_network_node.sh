@@ -76,7 +76,7 @@ ini_set $conf_file "DEFAULT" "auth_region" "regionOne"
 ini_set $conf_file "DEFAULT" "admin_tenant_name" "service"
 ini_set $conf_file "DEFAULT" "admin_user" "$NEUTRON_USER"
 ini_set $conf_file "DEFAULT" "admin_password" "$NEUTRON_PASS"
-ini_set $conf_file "DEFAULT" "nova_metadata_ip" "$NOVA_SERVER"
+ini_set $conf_file "DEFAULT" "nova_metadata_ip" "$(get_ip_by_hostname $NOVA_SERVER)"
 ini_set $conf_file "DEFAULT" "metadata_proxy_shared_secret" "$METADATA_SECRET"
 # to trouble shooting
 ini_set $conf_file "DEFAULT" "verbose" "True"
