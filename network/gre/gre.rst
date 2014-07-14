@@ -11,7 +11,7 @@ OpenStack GRE 网络配置详解
 
 .. figure:: gre.png
 
-Configure GRE network
+Configure network
 ----------------------
 ::
 
@@ -44,12 +44,15 @@ Create VM
 
     sh tools/create_vm.sh cirros01 cirros-x86_64 demo-net
 
+connect to VM through vnc::
+
     nova get-vnc-console cirros01
 
 
 Check network
 --------------
-On compute node:
+compute node
+~~~~~~~~~~~~~~
 
 ovs-vsctl show::
 
@@ -79,6 +82,7 @@ ovs-vsctl show::
                     options: {in_key=flow, local_ip="192.168.1.250", out_key=flow, remote_ip="192.168.1.251"}
         ovs_version: "2.0.1"
 
++ br-tun 为 GRE Tunnel 桥
 
 ``ip link``::
 
@@ -121,7 +125,7 @@ ovs-vsctl show::
 
       <target dev='tap615add81-37'/>
 
-+ VM 使用接口 tap615add81-37
++ VM 使用接口 tap615add81-378108a40e-292b-4ed0-80c1-23fc08aacd3d
 + tap615add81-37 和 qvb615add81-37 在桥 qbr615add81-37 里
 
 ``ethtool -S qvb615add81-37``::
@@ -144,7 +148,8 @@ ovs-vsctl show::
 + qvo615add81-37 通过 patch-tun, patch-int 到达 br-tun
 + br-tun 通过 gre-096f39fb, gre-096f39fa 到达网络节点的 br-tun
 
-On network node:
+network node
+~~~~~~~~~~~~~
 
 ``ovs-vsctl show``::
 
@@ -187,6 +192,11 @@ On network node:
             Port "eth0"
                 Interface "eth0"
         ovs_version: "2.0.1"
+
+``ip netns``::
+
+    qdhcp-86fbb659-f59b-4a48-86e8-efdf74491678
+    qrouter-59d2cc28-b4ab-4c54-9208-7fb899445278
 
 ``ip netns exec qdhcp-86fbb659-f59b-4a48-86e8-efdf74491678 ip link``::
 
@@ -275,3 +285,40 @@ On network node:
     root     27510     1  0 11:32 ?        00:00:00 /usr/bin/python /usr/bin/neutron-ns-metadata-proxy --pid_file=/var/lib/neutron/external/pids/59d2cc28-b4ab-4c54-9208-7fb899445278.pid --metadata_proxy_socket=/var/lib/neutron/metadata_proxy --router_id=59d2cc28-b4ab-4c54-9208-7fb899445278 --state_path=/var/lib/neutron --metadata_port=9697 --verbose --log-file=neutron-ns-metadata-proxy-59d2cc28-b4ab-4c54-9208-7fb899445278.log --log-dir=/var/log/neutron
 
 + 9697 端口是 Neutron Metadata agent
+
+OpenFlow
+~~~~~~~~~
+``ovs-ofctl dump-flows br-int``::
+
+    NXST_FLOW reply (xid=0x4):
+     cookie=0x0, duration=1459.955s, table=0, n_packets=258, n_bytes=25979, idle_age=976, priority=1 actions=NORMAL
+
+
+``ovs-ofctl dump-flows br-tun``::
+
+    NXST_FLOW reply (xid=0x4):
+     cookie=0x0, duration=1504.437s, table=0, n_packets=173, n_bytes=16646, idle_age=1021, priority=1,in_port=1 actions=resubmit(,1)
+     cookie=0x0, duration=1497.02s, table=0, n_packets=90, n_bytes=9723, idle_age=1033, priority=1,in_port=2 actions=resubmit(,2)
+     cookie=0x0, duration=1504.391s, table=0, n_packets=6, n_bytes=468, idle_age=1495, priority=0 actions=drop
+     cookie=0x0, duration=1504.35s, table=1, n_packets=151, n_bytes=14452, idle_age=1021, priority=1,dl_dst=00:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,20)
+     cookie=0x0, duration=1504.308s, table=1, n_packets=22, n_bytes=2194, idle_age=1324, priority=1,dl_dst=01:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,21)
+     cookie=0x0, duration=1342.984s, table=2, n_packets=85, n_bytes=9333, idle_age=1033, priority=1,tun_id=0x2 actions=mod_vlan_vid:1,resubmit(,10)
+     cookie=0x0, duration=1504.258s, table=2, n_packets=5, n_bytes=390, idle_age=1343, priority=0 actions=drop
+     cookie=0x0, duration=1504.209s, table=3, n_packets=0, n_bytes=0, idle_age=1504, priority=0 actions=drop
+     cookie=0x0, duration=1504.158s, table=10, n_packets=85, n_bytes=9333, idle_age=1033, priority=1 actions=learn(table=20,hard_timeout=300,priority=1,NXM_OF_VLAN_TCI[0..11],NXM_OF_ETH_DST[]=NXM_OF_ETH_SRC[],load:0->NXM_OF_VLAN_TCI[],load:NXM_NX_TUN_ID[]->NXM_NX_TUN_ID[],output:NXM_OF_IN_PORT[]),output:1
+     cookie=0x0, duration=1504.096s, table=20, n_packets=0, n_bytes=0, idle_age=1504, priority=0 actions=resubmit(,21)
+     cookie=0x0, duration=1343.039s, table=21, n_packets=18, n_bytes=1878, idle_age=1324, dl_vlan=1 actions=strip_vlan,set_tunnel:0x2,output:2
+     cookie=0x0, duration=1504.029s, table=21, n_packets=4, n_bytes=316, idle_age=1343, priority=0 actions=drop
+
+
++ 更改 tunnel 2 的包为 vlan1
++ vlan1 的包去除 vlan 标记，并设置 tunnel 标记为 2
++ gre 上的数据是普通的 IP 包，可路由到任意网络
+
+``ovs-ofctl dump-flows br-ex``::
+
+    NXST_FLOW reply (xid=0x4):
+     cookie=0x0, duration=1569.861s, table=0, n_packets=85, n_bytes=6858, idle_age=1092, priority=0 actions=NORMAL
+
+
+

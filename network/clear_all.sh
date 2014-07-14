@@ -23,5 +23,8 @@ neutron net-delete ext-net
 neutron subnet-delete demo-subnet
 neutron net-delete demo-net
 
+for netns in `ip netns`; do
+    ip netns delete $netns
+done
 
 # vim: ts=4 sw=4 et tw=79
