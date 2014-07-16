@@ -69,15 +69,19 @@ ini_set $conf_file "DEFAULT" "vncserver_listen" "$NOVA_COMPUTE_SERVER"
 ini_set $conf_file "DEFAULT" "vncserver_proxyclient_address" "$NOVA_COMPUTE_SERVER"
 ini_set $conf_file "DEFAULT" "novncproxy_base_url" "http://$NOVA_SERVER:6080/vnc_auto.html"
 ini_set $conf_file "DEFAULT" "glance_host" "$GLANCE_SERVER"
+# Fix: Virtual Interface creation failed
+ini_set $conf_file "DEFAULT" "vif_plugging_timeout" "0"
+ini_set $conf_file "DEFAULT" "vif_plugging_is_fatal" "False"
 
 conf_file="/etc/nova/nova-compute.conf"
-ini_set $conf_file "libvirt" "virt_type" "qemu"
-
 ret=`egrep -c '(vmx|svm)' /proc/cpuinfo`
 if [ $ret -gt 0 ]; then
-    echo "Compute node support hardware acceleration VM"
+    echo "Support hardware acceleration VM. virt_type is \"kvm\"."
+    kvm-ok
+    ini_set $conf_file "libvirt" "virt_type" "kvm"
 else
-    echo "Change "virt_type = qemu" of [libvirt] in /etc/nova/nova-compute.conf"
+    echo "virt_type is \"qemu\"."
+    ini_set $conf_file "libvirt" "virt_type" "qemu"
 fi
 
 # /var/log/nova/nova-compute.log

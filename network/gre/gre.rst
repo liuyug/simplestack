@@ -96,7 +96,7 @@ ovs-vsctl show::
         link/ether 3e:4b:8a:b4:83:aa brd ff:ff:ff:ff:ff:ff
     7: virbr0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default 
         link/ether aa:5b:68:49:b3:cd brd ff:ff:ff:ff:ff:ff
-    9: br-int: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT group default 
+    9: br-int: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT group default tap615add81-378108a40e-292b-4ed0-80c1-23fc08aacd3d
         link/ether ba:c3:07:ae:95:46 brd ff:ff:ff:ff:ff:ff
     13: br-tun: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT group default 
         link/ether 06:83:d9:f6:34:4e brd ff:ff:ff:ff:ff:ff
@@ -125,7 +125,7 @@ ovs-vsctl show::
 
       <target dev='tap615add81-37'/>
 
-+ VM 使用接口 tap615add81-378108a40e-292b-4ed0-80c1-23fc08aacd3d
++ VM 使用接口 tap615add81-37
 + tap615add81-37 和 qvb615add81-37 在桥 qbr615add81-37 里
 
 ``ethtool -S qvb615add81-37``::

@@ -15,4 +15,6 @@ ini_set $stack_conf "rabbit" "password" $RABBIT_PASS
 apt-get install rabbitmq-server -y
 rabbitmqctl change_password $RABBIT_USER $RABBIT_PASS
 
+service  rabbitmq-server restart
+
 # vim: ts=4 sw=4 et tw=79

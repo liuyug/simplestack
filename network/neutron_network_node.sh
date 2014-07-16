@@ -87,9 +87,7 @@ ini_set $conf_file "ml2" "type_drivers" "local"
 ini_set $conf_file "ml2" "tenant_network_types" "local"
 ini_set $conf_file "ml2" "mechanism_drivers" "openvswitch"
 ini_set $conf_file "ml2_type_gre" "tunnel_id_ranges" "1:1000"
-ini_set $conf_file "ovs" "local_ip" "$(get_ip_by_hostname $NEUTRON_NODE_SERVER)"
-ini_set $conf_file "ovs" "tunnel_type" "gre"
-ini_set $conf_file "ovs" "enable_tunneling" "False"
+ini_set $conf_file "ovs" "integration_bridge" "br-int"
 ini_set $conf_file "securitygroup" "firewall_driver" \
     "neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver"
 ini_set $conf_file "securitygroup" "enable_security_group" "True"
@@ -107,34 +105,6 @@ ovs-vsctl add-br br-int
 ovs-vsctl del-br br-ex
 ovs-vsctl add-br br-ex
 ovs-vsctl add-port br-ex $NEUTRON_EXTERNAL_INTERFACE
-
-# move NEUTRON_EXTERNAL_INTERFACE ip to br-ex and set promisc mode
-#ips=$(get_ips_by_interface $NEUTRON_EXTERNAL_INTERFACE)
-#gateway=$(ip route | awk '/^default /{print $3}')
-# for ip in ips; do
-#     ip addr del $ip dev $NEUTRON_EXTERNAL_INTERFACE
-#     ip addr add $ip dev br-ex
-# done
-# if ip route | grep default | grep $NEUTRON_EXTERNAL_INTERFACE; then
-#     gateway=$(ip route | awk '/^default /{print $3}')
-#     ip change '0.0.0.0/0' via $gateway dev br-ex
-# fi
-# ip link set dev $NEUTRON_EXTERNAL_INTERFACE promisc on
-# 
-cat <<EOF > br-ex_interface
-# append and change in /etc/network/interface
-auto br-ex
-iface br-ex inet static
-address 192.168.203.1
-netmask 255.255.255.0
-gateway 192.168.203.1
-dns-nameserver 8.8.8.8
-
-auto eth0
-iface eth0 inet manual
-up   ifconfig \$IFACE 0.0.0.0 up
-down ifconfig \$IFACE down
-EOF
 
 # disable Generic Receive Offload (GRO) to achieve suitable throughput between
 # your instances and the external network.

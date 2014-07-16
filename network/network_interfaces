@@ -1,0 +1,12 @@
+# append and change in /etc/network/interfaces
+auto br-ex
+iface br-ex inet static
+address 192.168.100.10
+netmask 255.255.255.0
+gateway 192.168.100.1
+dns-nameserver 8.8.8.8
+
+auto eth0
+iface eth0 inet manual
+up   ifconfig $IFACE 0.0.0.0 up
+down ifconfig $IFACE down

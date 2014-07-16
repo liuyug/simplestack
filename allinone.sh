@@ -87,7 +87,6 @@ identity/configure.sh
 # glance-registry port: 6784
 
 image/glance.sh
-image/add_default_image.sh
 
 # Compute service
 # ---------------
@@ -227,7 +226,12 @@ compute/compute_node.sh
 # service will bind public IP addresses.
 #
 # neutron api port: 9696
-network/nova-network.sh
+
+network/neutron.sh
+network/neutron_network_node.sh
+network/neutron_compute_node.sh
+
+# network/nova-network.sh
 
 # Dashboard service
 # -----------------
@@ -416,7 +420,7 @@ telemetry/ceilometer_object_node.sh
 #
 #   Runs within the guest instance.  Manages and performs operations on the
 #   database itself.
-echo "There are many bug in Icehouse. Wait next generation!"
+echo "There are many bug in Icehouse. Wait next version!"
 
 #
 # vim: ts=4 sw=4 et tw=79
