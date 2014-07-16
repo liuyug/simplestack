@@ -104,7 +104,7 @@ ovs-vsctl del-br br-int
 ovs-vsctl add-br br-int
 ovs-vsctl del-br br-ex
 ovs-vsctl add-br br-ex
-ovs-vsctl add-port br-ex $NEUTRON_EXTERNAL_INTERFACE
+# ovs-vsctl add-port br-ex $NEUTRON_EXTERNAL_INTERFACE
 
 # disable Generic Receive Offload (GRO) to achieve suitable throughput between
 # your instances and the external network.

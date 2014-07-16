@@ -230,6 +230,9 @@ compute/compute_node.sh
 network/neutron.sh
 network/neutron_network_node.sh
 network/neutron_compute_node.sh
+network/local/local_settings.sh
+network/local/create_ext-net.sh
+network/local/create_int-net.sh
 
 # network/nova-network.sh
 
@@ -314,11 +317,11 @@ block_storage/cinder_node.sh
 # Identity Service.
 #
 # swift proxy port: 8080
-object_storage/swift_storage_node_prepare.sh
-object_storage/swift.sh
-object_storage/swift_add_storage_node.sh
-object_storage/swift_start.sh
-object_storage/swift_storage_node_start.sh
+# object_storage/swift_storage_node_prepare.sh
+# object_storage/swift.sh
+# object_storage/swift_add_storage_node.sh
+# object_storage/swift_start.sh
+# object_storage/swift_storage_node_start.sh
 
 # Orchestration service
 # ---------------------
@@ -343,7 +346,7 @@ object_storage/swift_storage_node_start.sh
 #
 #   Orchestrates the launching of templates and provides events back to the API
 #   consumer.
-orchestration/heat.sh
+# orchestration/heat.sh
 
 # Telemetry service
 # -----------------
@@ -385,12 +388,12 @@ orchestration/heat.sh
 #
 # These services communicate by using the standard OpenStack messaging bus.
 # Only the collector and API server have access to the data store.
-telemetry/ceilometer.sh
-telemetry/ceilometer_image_node.sh
-telemetry/ceilometer_compute_node.sh
+# telemetry/ceilometer.sh
+# telemetry/ceilometer_image_node.sh
+# telemetry/ceilometer_compute_node.sh
 # some bug
 # telemetry/ceilometer_block_node.sh
-telemetry/ceilometer_object_node.sh
+# telemetry/ceilometer_object_node.sh
 
 # Database service
 # ----------------
@@ -420,7 +423,7 @@ telemetry/ceilometer_object_node.sh
 #
 #   Runs within the guest instance.  Manages and performs operations on the
 #   database itself.
-echo "There are many bug in Icehouse. Wait next version!"
+# echo "There are many bug in Icehouse. Wait next version!"
 
 #
 # vim: ts=4 sw=4 et tw=79
