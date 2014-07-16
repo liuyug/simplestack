@@ -49,8 +49,58 @@ make user "rc" file::
 
 Step by step
 ~~~~~~~~~~~~
-ubuntu_rep.sh
-ntp/ntp.sh
+#. time service
+
+   ntp/ntp.sh
+
+#. database, mysql
+
+   database/db.sh
+
+#. ubuntu package
+
+   ubuntu_rep.sh
+
+#. messaging service, rabbitmq
+
+   messaging/mq.sh
+
+#. openstack keystone
+
+   identity/keystone.sh
+   identity/configure.sh
+
+#. openstack image service
+
+   image/glance.sh
+
+#. openstack compute service
+
+   compute/compute.sh
+   compute/compute_node.sh
+
+#. openstack network, use neutron
+
+   network/neutron.sh
+   network/neutron_network_node.sh
+   network/neutron_compute_node.sh
+
+   install network: local
+
+   network/local/local_settings.sh
+   network/local/create_ext-net.sh
+   network/local/create_int-net.sh
+
+#. openstack web management interface, dashboard
+
+   dashboard/dashboard.sh
+
+#. openstack block storage, cinder
+
+   block_storage/cinder.sh
+   block_storage/cinder_node_prerun.sh
+   block_storage/cinder_node.sh
+
 
 How to use
 -----------
