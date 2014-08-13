@@ -8,10 +8,10 @@ stack_conf=$cur_dir/../stack.conf
 
 # To configure the Modular Layer 2 (ML2) plug-in
 conf_file="/etc/neutron/plugins/ml2/ml2_conf.ini"
-ini_set $conf_file "ml2" "type_drivers" "flat, vlan"
-ini_set $conf_file "ml2" "tenant_network_types" "vlan"
+ini_set $conf_file "ml2" "type_drivers" "flat"
+ini_set $conf_file "ml2" "tenant_network_types" "flat"
 ini_set $conf_file "ml2" "mechanism_drivers" "openvswitch"
-ini_set $conf_file "ml2_type_vlan" "network_vlan_ranges" "phydemo"
+ini_set $conf_file "ml2_type_flat" "flat_networks" "phydemo"
 ini_set $conf_file "ovs" "bridge_mappings" "phydemo:br-data"
 ini_set $conf_file "ovs" "integration_bridge" "br-int"
 
