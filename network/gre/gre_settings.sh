@@ -2,8 +2,7 @@
 
 cur_dir=`dirname  $(readlink -fn $0)`
 
-. $cur_dir/../functions.sh
-stack_conf=$cur_dir/../stack.conf
+. $cur_dir/../../functions.sh
 
 DATA_INTERFACE="eth0"
 DATA_INTERFACE_IP=$(get_ips_by_interface $DATA_INTERFACE)

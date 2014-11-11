@@ -2,8 +2,7 @@
 
 cur_dir=`dirname  $(readlink -fn $0)`
 
-. $cur_dir/../functions.sh
-stack_conf=$cur_dir/../stack.conf
+. $cur_dir/../../functions.sh
 
 # To configure the Modular Layer 2 (ML2) plug-in
 conf_file="/etc/neutron/plugins/ml2/ml2_conf.ini"
